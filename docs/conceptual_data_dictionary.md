@@ -2,33 +2,39 @@
  
 This document describes all entities, attributes, semantic types, constraints and keys of the MediFlow medical clinic management system.
  
-> **Note:** A generalization entity `User` is planned for the ER diagram, from which `Patient`, `Employee`, `Physician` and `Receptionist/Administrative` will be derived as specializations.
+> **Note:** A generalization entity `Person` is used in the ER diagram, from which `Patient` and `Employee` are derived as specializations. `Employee` is further specialized into `Physician` and `Receptionist/Administrative`.
  
 ---
  
 ## Person/Role Entities
  
-### Patient
+### Person
  
 | Attribute | Description | Semantic Type | Required | Notes |
 |---|---|---|---|---|
 | CPF | Brazilian individual taxpayer ID | Simple (PK) | Yes | Numbers only |
-| FULL_NAME | Patient's full legal name | Composite | Yes | - |
+| FULL_NAME | Person's full legal name | Composite | Yes | - |
 | EMAIL | Personal email address | Simple | Yes | - |
-| PHONE | Patient's contact phone number | Simple | Yes | May be changed to multivalued |
+| PHONE | Contact phone number | Simple | Yes | May be changed to multivalued |
 | BIRTH_DATE | Date of birth | Simple | Yes | Age is derived from this field |
 | ADDRESS | Residential address | Composite | Yes | Divided into street, number, neighborhood, ZIP code and city |
+ 
+---
+ 
+### Patient *(specialization of Person)*
+ 
+| Attribute | Description | Semantic Type | Required | Notes |
+|---|---|---|---|---|
 | ID_INSURANCE | Patient's health insurance plan | Simple (FK) | No | Foreign key referencing Insurance |
  
 ---
  
-### Employee
+### Employee *(specialization of Person)*
  
 | Attribute | Description | Semantic Type | Required | Notes |
 |---|---|---|---|---|
-| CPF | Brazilian individual taxpayer ID | Simple (PK) | Yes | Numbers only |
-| FULL_NAME | Employee's full name | Composite | Yes | - |
-| BIRTH_DATE | Date of birth | Simple | Yes | - |
+| LOGIN | Login credential for system access | Simple | Yes | - |
+| PASSWORD | Password for system access | Simple | Yes | - |
  
 ---
  
@@ -46,9 +52,7 @@ This document describes all entities, attributes, semantic types, constraints an
  
 | Attribute | Description | Semantic Type | Required | Notes |
 |---|---|---|---|---|
-| SECTOR | Area of work within the clinic | Simple | Yes | - |
-| LOGIN | Login credential for system access | Simple | Yes | - |
-| PASSWORD | Password for system access | Simple | Yes | - |
+| ID_SECTOR | Area of work within the clinic | Simple (FK) | Yes | Foreign key referencing Sector |
  
 ---
  
@@ -104,6 +108,15 @@ This document describes all entities, attributes, semantic types, constraints an
 | ID_INSURANCE | Unique insurance plan identifier | Simple (PK) | Yes | Auto-generated |
 | INSURANCE_NAME | Name of the insurance provider | Simple | Yes | - |
 | ANS_CODE | Official health plan registration code | Simple | No | - |
+ 
+---
+ 
+### Sector
+ 
+| Attribute | Description | Semantic Type | Required | Notes |
+|---|---|---|---|---|
+| ID_SECTOR | Unique sector identifier | Simple (PK) | Yes | Auto-generated |
+| SECTOR_DESCRIPTION | Description of the sector | Simple | Yes | e.g. Reception, Financial, Administrative |
  
 ---
  
