@@ -8,8 +8,7 @@ The purpose is to design and implement a relational database for a fictitious me
 - The tools used are:
 
     - SGBD(s):
-        - PostgreSQL
-        - pgAdmin
+        - PostgreSQL with pgAdmin
 
     - Modeling Tools:
         - brModelo_v3.32
