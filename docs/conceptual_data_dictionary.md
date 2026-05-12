@@ -2,7 +2,7 @@
 
 This document describes all entities, attributes, semantic types, constraints and keys of the MediFlow medical clinic management system.
 
-> **Note:** `Patient` and `Employee` are independent entities. `Employee` is specialized into `Physician` and `Receptionist`. `Payment` is not an entity — it is modeled as a relationship with attributes between `Appointment` and `Patient`.
+> **Note:** `Patient` and `Employee` are independent entities. `Employee` is specialized into `Doctor` and `Receptionist`. `Payment` is not an entity — it is modeled as a relationship with attributes between `Appointment` and `Patient`.
 
 ---
 
@@ -37,13 +37,13 @@ This document describes all entities, attributes, semantic types, constraints an
 
 ---
 
-### Physician *(specialization of Employee)*
+### Doctor *(specialization of Employee)*
 
 | Attribute | Description | Semantic Type | Required | Notes |
 |---|---|---|---|---|
-| CRM | Regional Medical Council registration number | Simple | Yes | Physician identifier, candidate key |
-| SCHEDULE_STATUS | Indicates whether the physician is available for appointments | Simple | Yes | e.g. Active, On Leave, On Vacation |
-| ID_SPECIALTY | Physician's medical specialty | Simple | Yes | Foreign key referencing Specialty |
+| CRM | Regional Medical Council registration number | Simple | Yes | Doctor identifier, candidate key |
+| SCHEDULE_STATUS | Indicates whether the doctor is available for appointments | Simple | Yes | e.g. Active, On Leave, On Vacation |
+| ID_SPECIALTY | Doctor's medical specialty | Simple | Yes | Foreign key referencing Specialty |
 
 ---
 
