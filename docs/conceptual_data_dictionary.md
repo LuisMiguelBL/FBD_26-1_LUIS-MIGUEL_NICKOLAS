@@ -12,7 +12,7 @@ This document describes all entities, attributes, semantic types, constraints an
  
 | Attribute | Description | Semantic Type | Required | Notes |
 |---|---|---|---|---|
-| CPF | Brazilian individual taxpayer ID | Simple (PK) | Yes | Numbers only |
+| CPF | Brazilian individual taxpayer ID | Simple | Yes | Numbers only |
 | FULL_NAME | Person's full legal name | Composite | Yes | - |
 | EMAIL | Personal email address | Simple | Yes | - |
 | PHONE | Contact phone number | Simple | Yes | May be changed to multivalued |
@@ -25,7 +25,7 @@ This document describes all entities, attributes, semantic types, constraints an
  
 | Attribute | Description | Semantic Type | Required | Notes |
 |---|---|---|---|---|
-| ID_INSURANCE | Patient's health insurance plan | Simple (FK) | No | Foreign key referencing Insurance |
+| ID_INSURANCE | Patient's health insurance plan | Simple | No | Foreign key referencing Insurance |
  
 ---
  
@@ -44,7 +44,7 @@ This document describes all entities, attributes, semantic types, constraints an
 |---|---|---|---|---|
 | CRM | Regional Medical Council registration number | Simple | Yes | Doctor's identifier |
 | SCHEDULE_STATUS | Indicates whether the doctor is available for appointments | Simple | Yes | e.g. Active, On Leave, On Vacation |
-| ID_SPECIALTY | Doctor's medical specialty | Simple (FK) | Yes | Foreign key referencing Specialty |
+| ID_SPECIALTY | Doctor's medical specialty | Simple | Yes | Foreign key referencing Specialty |
  
 ---
  
@@ -52,7 +52,7 @@ This document describes all entities, attributes, semantic types, constraints an
  
 | Attribute | Description | Semantic Type | Required | Notes |
 |---|---|---|---|---|
-| ID_SECTOR | Area of work within the clinic | Simple (FK) | Yes | Foreign key referencing Sector |
+| ID_SECTOR | Area of work within the clinic | Simple | Yes | Foreign key referencing Sector |
  
 ---
  
@@ -62,7 +62,7 @@ This document describes all entities, attributes, semantic types, constraints an
  
 | Attribute | Description | Semantic Type | Required | Notes |
 |---|---|---|---|---|
-| ID_APPOINTMENT | Unique appointment identifier | Simple (PK) | Yes | Auto-generated |
+| ID_APPOINTMENT | Unique appointment identifier | Simple | Yes | Auto-generated |
 | DATE | Scheduled date for the appointment | Simple | Yes | Used to prevent scheduling conflicts |
 | TIME | Scheduled time for the appointment | Simple | Yes | Combined with DATE to avoid conflicts |
 | STATUS | Current status of the appointment | Simple | Yes | e.g. Scheduled, Rescheduled, Cancelled |
@@ -73,7 +73,7 @@ This document describes all entities, attributes, semantic types, constraints an
  
 | Attribute | Description | Semantic Type | Required | Notes |
 |---|---|---|---|---|
-| ID_PRESCRIPTION | Unique prescription identifier | Simple (PK) | Yes | Auto-generated |
+| ID_PRESCRIPTION | Unique prescription identifier | Simple | Yes | Auto-generated |
 | PRESCRIPTION_DETAILS | Prescribed medications and dosages | Simple | Yes | - |
 | ISSUE_DATE | Date the prescription was issued | Simple | Yes | - |
  
@@ -83,7 +83,7 @@ This document describes all entities, attributes, semantic types, constraints an
  
 | Attribute | Description | Semantic Type | Required | Notes |
 |---|---|---|---|---|
-| ID_PAYMENT | Unique payment identifier | Simple (PK) | Yes | Auto-generated |
+| ID_PAYMENT | Unique payment identifier | Simple | Yes | Auto-generated |
 | AMOUNT | Total amount charged for the appointment | Simple | Yes | - |
 | PAYMENT_METHOD | Method of payment used | Simple | Yes | e.g. Cash, Card, Insurance |
 | PAYMENT_STATUS | Indicates whether payment has been received | Simple | Yes | Paid or Pending |
@@ -96,7 +96,7 @@ This document describes all entities, attributes, semantic types, constraints an
  
 | Attribute | Description | Semantic Type | Required | Notes |
 |---|---|---|---|---|
-| ID_SPECIALTY | Unique specialty identifier | Simple (PK) | Yes | - |
+| ID_SPECIALTY | Unique specialty identifier | Simple | Yes | - |
 | SPECIALTY_NAME | Name of the medical specialty | Simple | Yes | e.g. Cardiology, Pediatrics |
  
 ---
@@ -105,7 +105,7 @@ This document describes all entities, attributes, semantic types, constraints an
  
 | Attribute | Description | Semantic Type | Required | Notes |
 |---|---|---|---|---|
-| ID_INSURANCE | Unique insurance plan identifier | Simple (PK) | Yes | Auto-generated |
+| ID_INSURANCE | Unique insurance plan identifier | Simple | Yes | Auto-generated |
 | INSURANCE_NAME | Name of the insurance provider | Simple | Yes | - |
 | ANS_CODE | Official health plan registration code | Simple | No | - |
  
@@ -115,7 +115,7 @@ This document describes all entities, attributes, semantic types, constraints an
  
 | Attribute | Description | Semantic Type | Required | Notes |
 |---|---|---|---|---|
-| ID_SECTOR | Unique sector identifier | Simple (PK) | Yes | Auto-generated |
+| ID_SECTOR | Unique sector identifier | Simple | Yes | Auto-generated |
 | SECTOR_DESCRIPTION | Description of the sector | Simple | Yes | e.g. Reception, Financial, Administrative |
  
 ---
