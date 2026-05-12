@@ -2,7 +2,7 @@
 
 This document describes all entities, attributes, semantic types, constraints and keys of the MediFlow medical clinic management system.
 
-> **Note:** `Patient` and `Employee` are independent entities. `Employee` is specialized into `Doctor` and `Receptionist`. `Payment` is not an entity — it is modeled as a relationship with attributes between `Appointment` and `Patient`.
+> **Note:** `Patient` and `Employee` are independent entities. `Employee` is specialized into `Doctor` and `Receptionist`. `Payment` and `Medical Prescription` are not entities — they are modeled as relationships with attributes.
 
 ---
 
@@ -70,7 +70,9 @@ This document describes all entities, attributes, semantic types, constraints an
 
 ---
 
-### Medical Prescription
+### Medical Prescription *(relationship attributes between Doctor and Patient)*
+
+> Medical Prescription is not a standalone entity. The attributes below belong to the relationship between `Doctor` and `Patient`.
 
 | Attribute | Description | Semantic Type | Required | Notes |
 |---|---|---|---|---|
