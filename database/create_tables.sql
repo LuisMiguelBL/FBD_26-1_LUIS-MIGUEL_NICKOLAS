@@ -1,0 +1,3 @@
+-- create_tables.sql
+-- This script creates all tables for the MediFlow database.
+-- To be implemented.

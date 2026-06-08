@@ -1,0 +1,3 @@
+-- add_constraints.sql
+-- This script adds additional constraints to the MediFlow database tables.
+-- To be implemented.

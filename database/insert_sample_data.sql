@@ -1,0 +1,3 @@
+-- insert_sample_data.sql
+-- This script populates the MediFlow database with sample data.
+-- To be implemented.
