@@ -1,13 +1,13 @@
 -- 1. specialty
 
-CREATE TABLE specialty (
+CREATE TABLE IF NOT EXISTS specialty (
     id SERIAL PRIMARY KEY,
     specialty_name VARCHAR(100) NOT NULL
 );
 
 -- 2. insurance
 
-CREATE TABLE insurance (
+CREATE TABLE IF NOT EXISTS insurance (
     id SERIAL PRIMARY KEY,
     insurance_name VARCHAR(100) NOT NULL,
     ans_code VARCHAR(20)
@@ -15,14 +15,14 @@ CREATE TABLE insurance (
 
 -- 3. sector
 
-CREATE TABLE sector (
+CREATE TABLE IF NOT EXISTS sector (
     id SERIAL PRIMARY KEY,
     sector_description VARCHAR(100) NOT NULL
 );
 
 -- 4. employee
 
-CREATE TABLE employee (
+CREATE TABLE IF NOT EXISTS employee (
     id SERIAL PRIMARY KEY,
     cpf VARCHAR(11) NOT NULL UNIQUE,
     full_name VARCHAR(100) NOT NULL,
@@ -40,7 +40,7 @@ CREATE TABLE employee (
 
 --5. doctor 
 
-CREATE TABLE doctor (
+CREATE TABLE IF NOT EXISTS doctor (
     employee_id INTEGER PRIMARY KEY REFERENCES employee(id) ON DELETE CASCADE,
     crm VARCHAR(20) NOT NULL UNIQUE,
     schedule_status VARCHAR(20) NOT NULL,
@@ -49,7 +49,7 @@ CREATE TABLE doctor (
 
 -- 6. receptionist 
 
-CREATE TABLE receptionist (
+CREATE TABLE IF NOT EXISTS receptionist (
     employee_id INTEGER PRIMARY KEY REFERENCES employee(id) ON DELETE CASCADE,
     shift VARCHAR(20) NOT NULL,
     sector_id INTEGER NOT NULL REFERENCES sector(id) ON DELETE CASCADE,
@@ -58,7 +58,7 @@ CREATE TABLE receptionist (
 
 -- 7. patient 
 
-CREATE TABLE patient (
+CREATE TABLE IF NOT EXISTS patient (
     cpf VARCHAR(11) PRIMARY KEY,
     full_name VARCHAR(100) NOT NULL,
     phone VARCHAR(20) NOT NULL,
@@ -73,7 +73,7 @@ CREATE TABLE patient (
 
 -- 8. appointment
 
-CREATE TABLE appointment (
+CREATE TABLE IF NOT EXISTS appointment (
     id SERIAL PRIMARY KEY,
     date DATE NOT NULL,
     time TIME NOT NULL,
@@ -85,7 +85,7 @@ CREATE TABLE appointment (
 
 -- 9. medical_prescription 
 
-CREATE TABLE medical_prescription (
+CREATE TABLE IF NOT EXISTS medical_prescription (
     id SERIAL PRIMARY KEY,
     prescription_details TEXT NOT NULL, 
     issue_date DATE NOT NULL,
@@ -95,7 +95,7 @@ CREATE TABLE medical_prescription (
 
 -- 10. payment
 
-CREATE TABLE payment (
+CREATE TABLE IF NOT EXISTS payment (
     id SERIAL PRIMARY KEY,
     amount NUMERIC(10, 2) NOT NULL,
     payment_method VARCHAR(50) NOT NULL,
