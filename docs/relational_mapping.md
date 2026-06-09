@@ -13,3 +13,5 @@ sector(**id**, sector_description)
 insurance(**id**, insurance_name, ans_code)
 
 appointment(**id_appointment**, date, time, status)
+
+speciality(**id**, *id_doctor*, speciality_name)
