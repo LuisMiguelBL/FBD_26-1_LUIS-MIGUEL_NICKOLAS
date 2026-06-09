@@ -57,16 +57,16 @@ Specialization of `employee`. Stores doctor-specific attributes.
 | employee_id | INTEGER | PRIMARY KEY, FOREIGN KEY → employee(id) | - |
 | crm | VARCHAR(20) | NOT NULL, UNIQUE | Doctor identifier |
 | schedule_status | VARCHAR(20) | NOT NULL | e.g. Active, On Leave, On Vacation |
-| id_specialty | INTEGER | NOT NULL, FOREIGN KEY → specialty(id) | - |
+| specialty_id | INTEGER | NOT NULL, FOREIGN KEY → specialty(id) | - |
 
 ```sql
 -- doctor
 -- Specialization of employee. Stores doctor-specific attributes.
 CREATE TABLE doctor (
-    employee_id INTEGER PRIMARY KEY REFERENCES employee(id),
+    employee_id INTEGER PRIMARY KEY REFERENCES employee(id) ON DELETE CASCADE,
     crm VARCHAR(20) NOT NULL UNIQUE,
     schedule_status VARCHAR(20) NOT NULL,
-    id_specialty INTEGER NOT NULL REFERENCES specialty(id)
+    specialty_id INTEGER NOT NULL REFERENCES specialty(id) ON DELETE CASCADE
 );
 ```
 
@@ -80,16 +80,16 @@ Specialization of `employee`. Stores receptionist-specific attributes.
 |---|---|---|---|
 | employee_id | INTEGER | PRIMARY KEY, FOREIGN KEY → employee(id) | - |
 | shift | VARCHAR(20) | NOT NULL | e.g. Morning, Afternoon, Night |
-| id_sector | INTEGER | NOT NULL, FOREIGN KEY → sector(id) | - |
+| sector_id | INTEGER | NOT NULL, FOREIGN KEY → sector(id) | - |
 | status | VARCHAR(20) | NOT NULL | e.g. Active, On Vacation |
 
 ```sql
 -- receptionist
 -- Specialization of employee. Stores receptionist-specific attributes.
 CREATE TABLE receptionist (
-    employee_id INTEGER PRIMARY KEY REFERENCES employee(id),
+    employee_id INTEGER PRIMARY KEY REFERENCES employee(id) ON DELETE CASCADE,
     shift VARCHAR(20) NOT NULL,
-    id_sector INTEGER NOT NULL REFERENCES sector(id),
+    sector_id INTEGER NOT NULL REFERENCES sector(id) ON DELETE CASCADE,
     status VARCHAR(20) NOT NULL
 );
 ```
@@ -111,7 +111,7 @@ Stores patient data. Independent from the employee hierarchy.
 | neighborhood | VARCHAR(100) | NOT NULL | Part of composite address |
 | zip_code | VARCHAR(10) | NOT NULL | Part of composite address |
 | city | VARCHAR(100) | NOT NULL | Part of composite address |
-| id_insurance | INTEGER | FOREIGN KEY → insurance(id) | Nullable — patient may not have insurance |
+| insurance_id | INTEGER | FOREIGN KEY → insurance(id) | Nullable — patient may not have insurance |
 
 ```sql
 -- patient
@@ -126,7 +126,7 @@ CREATE TABLE patient (
     neighborhood VARCHAR(100) NOT NULL,
     zip_code VARCHAR(10) NOT NULL,
     city VARCHAR(100) NOT NULL,
-    id_insurance INTEGER REFERENCES insurance(id)
+    insurance_id INTEGER REFERENCES insurance(id) ON DELETE CASCADE
 );
 ```
 
@@ -154,8 +154,8 @@ CREATE TABLE appointment (
     date DATE NOT NULL,
     time TIME NOT NULL,
     status VARCHAR(20) NOT NULL,
-    doctor_id INTEGER NOT NULL REFERENCES doctor(employee_id),
-    patient_cpf VARCHAR(11) NOT NULL REFERENCES patient(cpf),
+    doctor_id INTEGER NOT NULL REFERENCES doctor(employee_id) ON DELETE RESTRICT,
+    patient_cpf VARCHAR(11) NOT NULL REFERENCES patient(cpf) ON DELETE RESTRICT,
     UNIQUE (doctor_id, date, time)
 );
 ```
@@ -182,8 +182,8 @@ CREATE TABLE medical_prescription (
     id SERIAL PRIMARY KEY,
     prescription_details TEXT NOT NULL,
     issue_date DATE NOT NULL,
-    doctor_id INTEGER NOT NULL REFERENCES doctor(employee_id),
-    patient_cpf VARCHAR(11) NOT NULL REFERENCES patient(cpf)
+    doctor_id INTEGER NOT NULL REFERENCES doctor(employee_id) ON DELETE RESTRICT,
+    patient_cpf VARCHAR(11) NOT NULL REFERENCES patient(cpf) ON DELETE RESTRICT
 );
 ```
 
@@ -211,8 +211,8 @@ CREATE TABLE payment (
     amount NUMERIC(10,2) NOT NULL,
     payment_method VARCHAR(50) NOT NULL,
     payment_status VARCHAR(20) NOT NULL,
-    appointment_id INTEGER NOT NULL REFERENCES appointment(id),
-    patient_cpf VARCHAR(11) NOT NULL REFERENCES patient(cpf)
+    appointment_id INTEGER NOT NULL REFERENCES appointment(id) ON DELETE RESTRICT,
+    patient_cpf VARCHAR(11) NOT NULL REFERENCES patient(cpf) ON DELETE RESTRICT
 );
 ```
 

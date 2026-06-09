@@ -14,12 +14,16 @@ This document describes all entities, attributes, semantic types, constraints an
 |---|---|---|---|---|
 | CPF | Brazilian individual taxpayer ID | Simple | Yes | Numbers only, candidate key |
 | ID | Unique employee identifier | Simple | Yes | Auto-generated, candidate key |
-| FULL_NAME | Employee's full legal name | Composite | Yes | - |
+| FULL_NAME | Employee's full legal name | Simple | Yes | - |
 | EMAIL | Personal email address | Simple | Yes | - |
-| PHONE | Contact phone number | Simple | Yes | May be changed to multivalued |
+| PHONE | Contact phone number | Simple | Yes | - |
 | BIRTH_DATE | Date of birth | Simple | Yes | Age is derived from this field |
-| ADDRESS | Residential address | Composite | Yes | Divided into street, number, neighborhood, ZIP code and city |
-| LOGIN | Login credential for system access | Simple | Yes | - |
+| STREET | Street name of residence | Simple | Yes | Part of composite address |
+| NUMBER | House/Apartment number | Simple | Yes | Part of composite address |
+| NEIGHBORHOOD | Neighborhood name | Simple | Yes | Part of composite address |
+| ZIP_CODE | Postal code | Simple | Yes | Part of composite address |
+| CITY | City name | Simple | Yes | Part of composite address |
+| LOGIN | Login credential for system access | Simple | Yes | Candidate key |
 | PASSWORD | Password for system access | Simple | Yes | - |
 
 ---
@@ -28,12 +32,16 @@ This document describes all entities, attributes, semantic types, constraints an
 
 | Attribute | Description | Semantic Type | Required | Notes |
 |---|---|---|---|---|
-| CPF | Brazilian individual taxpayer ID | Simple | Yes | Numbers only, candidate key |
-| FULL_NAME | Patient's full legal name | Composite | Yes | - |
-| PHONE | Contact phone number | Simple | Yes | May be changed to multivalued |
+| CPF | Brazilian individual taxpayer ID | Simple | Yes | Numbers only, primary identifier |
+| FULL_NAME | Patient's full legal name | Simple | Yes | - |
+| PHONE | Contact phone number | Simple | Yes | - |
 | BIRTH_DATE | Date of birth | Simple | Yes | Age is derived from this field |
-| ADDRESS | Residential address | Composite | Yes | Divided into street, number, neighborhood, ZIP code and city |
-| ID_INSURANCE | Patient's health insurance plan | Simple | No | Foreign key referencing Insurance |
+| STREET | Street name of residence | Simple | Yes | Part of composite address |
+| NUMBER | House/Apartment number | Simple | Yes | Part of composite address |
+| NEIGHBORHOOD | Neighborhood name | Simple | Yes | Part of composite address |
+| ZIP_CODE | Postal code | Simple | Yes | Part of composite address |
+| CITY | City name | Simple | Yes | Part of composite address |
+| INSURANCE_ID | Patient's health insurance plan | Simple | No | Foreign key referencing Insurance |
 
 ---
 
@@ -41,9 +49,10 @@ This document describes all entities, attributes, semantic types, constraints an
 
 | Attribute | Description | Semantic Type | Required | Notes |
 |---|---|---|---|---|
+| EMPLOYEE_ID | Reference to Employee identifier | Simple | Yes | Primary Key, Foreign key referencing Employee |
 | CRM | Regional Medical Council registration number | Simple | Yes | Doctor identifier, candidate key |
 | SCHEDULE_STATUS | Indicates whether the doctor is available for appointments | Simple | Yes | e.g. Active, On Leave, On Vacation |
-| ID_SPECIALTY | Doctor's medical specialty | Simple | Yes | Foreign key referencing Specialty |
+| SPECIALTY_ID | Doctor's medical specialty | Simple | Yes | Foreign key referencing Specialty |
 
 ---
 
@@ -51,8 +60,9 @@ This document describes all entities, attributes, semantic types, constraints an
 
 | Attribute | Description | Semantic Type | Required | Notes |
 |---|---|---|---|---|
-| SHIFT | Work shift of the receptionist | Simple | Yes | - |
-| ID_SECTOR | Sector where the receptionist works | Simple | Yes | Foreign key referencing Sector |
+| EMPLOYEE_ID | Reference to Employee identifier | Simple | Yes | Primary Key, Foreign key referencing Employee |
+| SHIFT | Work shift of the receptionist | Simple | Yes | e.g. Morning, Afternoon, Night |
+| SECTOR_ID | Sector where the receptionist works | Simple | Yes | Foreign key referencing Sector |
 | STATUS | Current employment status | Simple | Yes | e.g. Active, On Vacation |
 
 ---
@@ -64,9 +74,11 @@ This document describes all entities, attributes, semantic types, constraints an
 | Attribute | Description | Semantic Type | Required | Notes |
 |---|---|---|---|---|
 | ID | Unique appointment identifier | Simple | Yes | Auto-generated, candidate key |
-| DATE | Scheduled date for the appointment | Simple | Yes | Used to prevent scheduling conflicts |
-| TIME | Scheduled time for the appointment | Simple | Yes | Combined with DATE to avoid conflicts |
+| DATE | Scheduled date for the appointment | Simple | Yes | Combined with TIME and DOCTOR_ID for uniqueness |
+| TIME | Scheduled time for the appointment | Simple | Yes | Combined with DATE and DOCTOR_ID for uniqueness |
 | STATUS | Current status of the appointment | Simple | Yes | e.g. Scheduled, Rescheduled, Cancelled |
+| DOCTOR_ID | Doctor assigned to the appointment | Simple | Yes | Foreign key referencing Doctor |
+| PATIENT_CPF | Patient assigned to the appointment | Simple | Yes | Foreign key referencing Patient |
 
 ---
 
@@ -79,19 +91,23 @@ This document describes all entities, attributes, semantic types, constraints an
 | ID | Unique prescription identifier | Simple | Yes | Auto-generated, candidate key |
 | PRESCRIPTION_DETAILS | Prescribed medications and dosages | Simple | Yes | - |
 | ISSUE_DATE | Date the prescription was issued | Simple | Yes | - |
+| DOCTOR_ID | Doctor who issued the prescription | Simple | Yes | Foreign key referencing Doctor |
+| PATIENT_CPF | Patient who received the prescription | Simple | Yes | Foreign key referencing Patient |
 
 ---
 
-### Payment *(relationship attributes between Appointment and Patient)*
+## Payment *(relationship attributes between Appointment and Patient)*
 
 > Payment is not a standalone entity. The attributes below belong to the relationship between `Appointment` and `Patient`.
 
 | Attribute | Description | Semantic Type | Required | Notes |
 |---|---|---|---|---|
-| ID_PAYMENT | Unique payment identifier | Simple | Yes | Auto-generated, candidate key |
+| ID | Unique payment identifier | Simple | Yes | Auto-generated, candidate key |
 | AMOUNT | Total amount charged for the appointment | Simple | Yes | - |
 | PAYMENT_METHOD | Method of payment used | Simple | Yes | e.g. Cash, Card, Insurance |
 | PAYMENT_STATUS | Indicates whether payment has been received | Simple | Yes | Paid or Pending |
+| APPOINTMENT_ID | Appointment associated with the payment | Simple | Yes | Foreign key referencing Appointment |
+| PATIENT_CPF | Patient who made the payment | Simple | Yes | Foreign key referencing Patient |
 
 ---
 
