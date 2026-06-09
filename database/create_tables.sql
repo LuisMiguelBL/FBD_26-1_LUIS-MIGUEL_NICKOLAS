@@ -1,15 +1,11 @@
--- create_tables.sql
--- This script creates all tables for the MediFlow database.
--- To be implemented.
-
-1. specialty
+-- 1. specialty
 
 CREATE TABLE specialty (
     id SERIAL PRIMARY KEY,
     specialty_name VARCHAR(100) NOT NULL
 );
 
-2. insurance
+-- 2. insurance
 
 CREATE TABLE insurance (
     id SERIAL PRIMARY KEY,
@@ -17,14 +13,14 @@ CREATE TABLE insurance (
     ans_code VARCHAR(20)
 );
 
-3. sector
+-- 3. sector
 
 CREATE TABLE sector (
     id SERIAL PRIMARY KEY,
     sector_description VARCHAR(100) NOT NULL
 );
 
-4. employee
+-- 4. employee
 
 CREATE TABLE employee (
     id SERIAL PRIMARY KEY,
@@ -42,7 +38,7 @@ CREATE TABLE employee (
     password VARCHAR(255) NOT NULL
 );
 
-5. doctor (depende de employee e specialty)
+--5. doctor 
 
 CREATE TABLE doctor (
     employee_id INTEGER PRIMARY KEY REFERENCES employee(id) ON DELETE CASCADE,
@@ -51,7 +47,7 @@ CREATE TABLE doctor (
     specialty_id INTEGER NOT NULL REFERENCES specialty(id) ON DELETE CASCADE
 );
 
-6. receptionist (depende de employee e sector)
+-- 6. receptionist 
 
 CREATE TABLE receptionist (
     employee_id INTEGER PRIMARY KEY REFERENCES employee(id) ON DELETE CASCADE,
@@ -60,7 +56,7 @@ CREATE TABLE receptionist (
     status VARCHAR(20) NOT NULL
 );
 
-7. patient (depende de insurance)
+-- 7. patient 
 
 CREATE TABLE patient (
     cpf VARCHAR(11) PRIMARY KEY,
@@ -75,7 +71,7 @@ CREATE TABLE patient (
     insurance_id INTEGER REFERENCES insurance(id) ON DELETE CASCADE
 );
 
-8. appointment (depende de doctor e patient)
+-- 8. appointment
 
 CREATE TABLE appointment (
     id SERIAL PRIMARY KEY,
@@ -87,7 +83,7 @@ CREATE TABLE appointment (
     UNIQUE (doctor_id, date, time)
 );
 
-9. medical_prescription (depende de doctor e patient)
+-- 9. medical_prescription 
 
 CREATE TABLE medical_prescription (
     id SERIAL PRIMARY KEY,
@@ -97,7 +93,7 @@ CREATE TABLE medical_prescription (
     patient_cpf VARCHAR(11) NOT NULL REFERENCES patient(cpf) ON DELETE RESTRICT
 );
 
-10. payment (depende de appointment e patient)
+-- 10. payment
 
 CREATE TABLE payment (
     id SERIAL PRIMARY KEY,
