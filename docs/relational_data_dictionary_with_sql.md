@@ -6,6 +6,94 @@ This document describes the relational schema derived from the ER diagram, inclu
 
 ## Tables
 
+### speciality
+
+Stores medical specialties.
+
+| Column | Type | Constraints | Notes |
+|---|---|---|---|
+| id | SERIAL | PRIMARY KEY | Auto-generated |
+| specialty_name | VARCHAR(100) | NOT NULL | e.g. Cardiology, Pediatrics |
+
+```sql
+-- speciality
+-- Stores the available medical specialties.
+CREATE TABLE IF NOT EXISTS speciality (
+    id SERIAL PRIMARY KEY,
+    specialty_name VARCHAR(100) NOT NULL
+);
+```
+
+---
+
+### insurance
+
+Stores health insurance providers.
+
+| Column | Type | Constraints | Notes |
+|---|---|---|---|
+| id | SERIAL | PRIMARY KEY | Auto-generated |
+| insurance_name | VARCHAR(100) | NOT NULL | - |
+| ans_code | VARCHAR(20) | - | Official health plan registration code |
+
+```sql
+-- insurance
+-- Stores health insurance providers available to patients.
+CREATE TABLE IF NOT EXISTS insurance (
+    id SERIAL PRIMARY KEY,
+    insurance_name VARCHAR(100) NOT NULL,
+    ans_code VARCHAR(20)
+);
+```
+
+---
+
+### sector
+
+Stores clinic sectors where receptionists work.
+
+| Column | Type | Constraints | Notes |
+|---|---|---|---|
+| id | SERIAL | PRIMARY KEY | Auto-generated |
+| sector_description | VARCHAR(100) | NOT NULL | e.g. Reception, Financial, Administrative |
+
+```sql
+-- sector
+-- Stores the clinic sectors where receptionists are assigned.
+CREATE TABLE IF NOT EXISTS sector (
+    id SERIAL PRIMARY KEY,
+    sector_description VARCHAR(100) NOT NULL
+);
+```
+
+---
+
+### appointment
+
+Stores scheduled appointments between doctors and patients.
+
+| Column | Type | Constraints | Notes |
+|---|---|---|---|
+| id | SERIAL | PRIMARY KEY | Auto-generated |
+| date | DATE | NOT NULL | - |
+| time | TIME | NOT NULL | Combined with date to avoid conflicts |
+| status | VARCHAR(20) | NOT NULL | e.g. Scheduled, Rescheduled, Cancelled |
+
+```sql
+-- appointment
+-- Stores scheduled appointments between doctors and patients.
+-- The combination of doctor_id, date and time must be unique to prevent scheduling conflicts.
+CREATE TABLE IF NOT EXISTS appointment (
+    id SERIAL PRIMARY KEY,
+    date DATE NOT NULL,
+    time TIME NOT NULL,
+    status VARCHAR(20) NOT NULL
+       
+);
+```
+
+---
+
 ### employee
 
 Stores all employees of the clinic. `Doctor` and `Receptionist` are specializations of this entity.
@@ -224,94 +312,6 @@ CREATE TABLE IF NOT EXISTS PatientPhone (
     FOREIGN KEY (cpf_patient)
         REFERENCES patient(cpf)
         ON DELETE CASCADE
-);
-```
-
----
-
-### speciality
-
-Stores medical specialties.
-
-| Column | Type | Constraints | Notes |
-|---|---|---|---|
-| id | SERIAL | PRIMARY KEY | Auto-generated |
-| specialty_name | VARCHAR(100) | NOT NULL | e.g. Cardiology, Pediatrics |
-
-```sql
--- speciality
--- Stores the available medical specialties.
-CREATE TABLE IF NOT EXISTS speciality (
-    id SERIAL PRIMARY KEY,
-    specialty_name VARCHAR(100) NOT NULL
-);
-```
-
----
-
-### insurance
-
-Stores health insurance providers.
-
-| Column | Type | Constraints | Notes |
-|---|---|---|---|
-| id | SERIAL | PRIMARY KEY | Auto-generated |
-| insurance_name | VARCHAR(100) | NOT NULL | - |
-| ans_code | VARCHAR(20) | - | Official health plan registration code |
-
-```sql
--- insurance
--- Stores health insurance providers available to patients.
-CREATE TABLE IF NOT EXISTS insurance (
-    id SERIAL PRIMARY KEY,
-    insurance_name VARCHAR(100) NOT NULL,
-    ans_code VARCHAR(20)
-);
-```
-
----
-
-### sector
-
-Stores clinic sectors where receptionists work.
-
-| Column | Type | Constraints | Notes |
-|---|---|---|---|
-| id | SERIAL | PRIMARY KEY | Auto-generated |
-| sector_description | VARCHAR(100) | NOT NULL | e.g. Reception, Financial, Administrative |
-
-```sql
--- sector
--- Stores the clinic sectors where receptionists are assigned.
-CREATE TABLE IF NOT EXISTS sector (
-    id SERIAL PRIMARY KEY,
-    sector_description VARCHAR(100) NOT NULL
-);
-```
-
----
-
-### appointment
-
-Stores scheduled appointments between doctors and patients.
-
-| Column | Type | Constraints | Notes |
-|---|---|---|---|
-| id | SERIAL | PRIMARY KEY | Auto-generated |
-| date | DATE | NOT NULL | - |
-| time | TIME | NOT NULL | Combined with date to avoid conflicts |
-| status | VARCHAR(20) | NOT NULL | e.g. Scheduled, Rescheduled, Cancelled |
-
-```sql
--- appointment
--- Stores scheduled appointments between doctors and patients.
--- The combination of doctor_id, date and time must be unique to prevent scheduling conflicts.
-CREATE TABLE IF NOT EXISTS appointment (
-    id SERIAL PRIMARY KEY,
-    date DATE NOT NULL,
-    time TIME NOT NULL,
-    status VARCHAR(20) NOT NULL
-       
 );
 ```
 
