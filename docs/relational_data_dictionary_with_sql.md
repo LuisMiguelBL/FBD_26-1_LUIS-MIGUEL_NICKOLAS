@@ -12,11 +12,9 @@ Stores all employees of the clinic. `Doctor` and `Receptionist` are specializati
 
 | Column | Type | Constraints | Notes |
 |---|---|---|---|
-| id | SERIAL | PRIMARY KEY | Auto-generated |
-| cpf | VARCHAR(11) | NOT NULL, UNIQUE | Numbers only |
+| cpf | VARCHAR(11) | PRIMARY KEY | Numbers only |
 | full_name | VARCHAR(100) | NOT NULL | - |
 | email | VARCHAR(100) | NOT NULL | - |
-| phone | VARCHAR(20) | NOT NULL | - |
 | birth_date | DATE | NOT NULL | - |
 | street | VARCHAR(100) | NOT NULL | Part of composite address |
 | number | VARCHAR(10) | NOT NULL | Part of composite address |
@@ -30,8 +28,7 @@ Stores all employees of the clinic. `Doctor` and `Receptionist` are specializati
 -- employee
 -- Stores all employees of the clinic (doctors, receptionists and other staff).
 CREATE TABLE employee (
-    id SERIAL PRIMARY KEY,
-    cpf VARCHAR(11) NOT NULL UNIQUE,
+    cpf VARCHAR(11) PRIMARY KEY,
     full_name VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL,
     phone VARCHAR(20) NOT NULL,
@@ -54,19 +51,19 @@ Specialization of `employee`. Stores doctor-specific attributes.
 
 | Column | Type | Constraints | Notes |
 |---|---|---|---|
-| employee_id | INTEGER | PRIMARY KEY, FOREIGN KEY → employee(id) | - |
+| cpf_employee | VARCHAR | PRIMARY KEY, FOREIGN KEY → employee(cpf) | - |
 | crm | VARCHAR(20) | NOT NULL, UNIQUE | Doctor identifier |
 | schedule_status | VARCHAR(20) | NOT NULL | e.g. Active, On Leave, On Vacation |
-| specialty_id | INTEGER | NOT NULL, FOREIGN KEY → specialty(id) | - |
+
 
 ```sql
 -- doctor
 -- Specialization of employee. Stores doctor-specific attributes.
 CREATE TABLE doctor (
-    employee_id INTEGER PRIMARY KEY REFERENCES employee(id) ON DELETE CASCADE,
+    cpf_employee VARCHAR PRIMARY KEY REFERENCES employee(cpf) ON DELETE CASCADE,
     crm VARCHAR(20) NOT NULL UNIQUE,
     schedule_status VARCHAR(20) NOT NULL,
-    specialty_id INTEGER NOT NULL REFERENCES specialty(id) ON DELETE CASCADE
+    
 );
 ```
 
@@ -78,18 +75,16 @@ Specialization of `employee`. Stores receptionist-specific attributes.
 
 | Column | Type | Constraints | Notes |
 |---|---|---|---|
-| employee_id | INTEGER | PRIMARY KEY, FOREIGN KEY → employee(id) | - |
+| cpf_employee | VARCHAR | PRIMARY KEY, FOREIGN KEY → employee(cpf) | - |
 | shift | VARCHAR(20) | NOT NULL | e.g. Morning, Afternoon, Night |
-| sector_id | INTEGER | NOT NULL, FOREIGN KEY → sector(id) | - |
 | status | VARCHAR(20) | NOT NULL | e.g. Active, On Vacation |
 
 ```sql
 -- receptionist
 -- Specialization of employee. Stores receptionist-specific attributes.
 CREATE TABLE receptionist (
-    employee_id INTEGER PRIMARY KEY REFERENCES employee(id) ON DELETE CASCADE,
+    cpf_employee VARCHAR PRIMARY KEY REFERENCES employee(cpf) ON DELETE CASCADE,
     shift VARCHAR(20) NOT NULL,
-    sector_id INTEGER NOT NULL REFERENCES sector(id) ON DELETE CASCADE,
     status VARCHAR(20) NOT NULL
 );
 ```
@@ -104,7 +99,6 @@ Stores patient data. Independent from the employee hierarchy.
 |---|---|---|---|
 | cpf | VARCHAR(11) | PRIMARY KEY | Numbers only |
 | full_name | VARCHAR(100) | NOT NULL | - |
-| phone | VARCHAR(20) | NOT NULL | - |
 | birth_date | DATE | NOT NULL | - |
 | street | VARCHAR(100) | NOT NULL | Part of composite address |
 | number | VARCHAR(10) | NOT NULL | Part of composite address |
@@ -142,8 +136,6 @@ Stores scheduled appointments between doctors and patients.
 | date | DATE | NOT NULL | - |
 | time | TIME | NOT NULL | Combined with date to avoid conflicts |
 | status | VARCHAR(20) | NOT NULL | e.g. Scheduled, Rescheduled, Cancelled |
-| doctor_id | INTEGER | NOT NULL, FOREIGN KEY → doctor(employee_id) | - |
-| patient_cpf | VARCHAR(11) | NOT NULL, FOREIGN KEY → patient(cpf) | - |
 
 ```sql
 -- appointment
@@ -154,71 +146,15 @@ CREATE TABLE appointment (
     date DATE NOT NULL,
     time TIME NOT NULL,
     status VARCHAR(20) NOT NULL,
-    doctor_id INTEGER NOT NULL REFERENCES doctor(employee_id) ON DELETE RESTRICT,
-    patient_cpf VARCHAR(11) NOT NULL REFERENCES patient(cpf) ON DELETE RESTRICT,
-    UNIQUE (doctor_id, date, time)
+       
 );
 ```
 
 ---
 
-### medical_prescription
 
-Derived from the relationship between `doctor` and `patient`. Stores prescriptions issued during appointments.
 
-| Column | Type | Constraints | Notes |
-|---|---|---|---|
-| id | SERIAL | PRIMARY KEY | Auto-generated |
-| prescription_details | TEXT | NOT NULL | - |
-| issue_date | DATE | NOT NULL | - |
-| doctor_id | INTEGER | NOT NULL, FOREIGN KEY → doctor(employee_id) | - |
-| patient_cpf | VARCHAR(11) | NOT NULL, FOREIGN KEY → patient(cpf) | - |
-
-```sql
--- medical_prescription
--- Derived from the relationship between doctor and patient.
--- Stores prescriptions issued during appointments.
-CREATE TABLE medical_prescription (
-    id SERIAL PRIMARY KEY,
-    prescription_details TEXT NOT NULL,
-    issue_date DATE NOT NULL,
-    doctor_id INTEGER NOT NULL REFERENCES doctor(employee_id) ON DELETE RESTRICT,
-    patient_cpf VARCHAR(11) NOT NULL REFERENCES patient(cpf) ON DELETE RESTRICT
-);
-```
-
----
-
-### payment
-
-Derived from the relationship between `appointment` and `patient`. Stores payment data for each appointment.
-
-| Column | Type | Constraints | Notes |
-|---|---|---|---|
-| id | SERIAL | PRIMARY KEY | Auto-generated |
-| amount | NUMERIC(10,2) | NOT NULL | - |
-| payment_method | VARCHAR(50) | NOT NULL | e.g. Cash, Card, Insurance |
-| payment_status | VARCHAR(20) | NOT NULL | e.g. Paid, Pending |
-| appointment_id | INTEGER | NOT NULL, FOREIGN KEY → appointment(id) | - |
-| patient_cpf | VARCHAR(11) | NOT NULL, FOREIGN KEY → patient(cpf) | - |
-
-```sql
--- payment
--- Derived from the relationship between appointment and patient.
--- Stores payment data associated with each appointment.
-CREATE TABLE payment (
-    id SERIAL PRIMARY KEY,
-    amount NUMERIC(10,2) NOT NULL,
-    payment_method VARCHAR(50) NOT NULL,
-    payment_status VARCHAR(20) NOT NULL,
-    appointment_id INTEGER NOT NULL REFERENCES appointment(id) ON DELETE RESTRICT,
-    patient_cpf VARCHAR(11) NOT NULL REFERENCES patient(cpf) ON DELETE RESTRICT
-);
-```
-
----
-
-### specialty
+### speciality
 
 Stores medical specialties.
 
@@ -228,15 +164,14 @@ Stores medical specialties.
 | specialty_name | VARCHAR(100) | NOT NULL | e.g. Cardiology, Pediatrics |
 
 ```sql
--- specialty
+-- speciality
 -- Stores the available medical specialties.
-CREATE TABLE specialty (
+CREATE TABLE speciality (
     id SERIAL PRIMARY KEY,
     specialty_name VARCHAR(100) NOT NULL
 );
 ```
 
----
 
 ### insurance
 
@@ -277,6 +212,170 @@ CREATE TABLE sector (
     sector_description VARCHAR(100) NOT NULL
 );
 ```
+
+---
+
+---
+
+### DoctorSpeciality
+
+Stores the doctors’ specializations.
+
+| Column | Type | Constraints | Notes |
+|---|---|---|---|
+| cpf_doctor| VARCHAR | PRIMARY KEY, FOREIGN KEY → doctor(cpf_employee) | - |
+| id_speciality | INT | PRIMARY KEY, FOREIGN KEY → specialit(id)  | - |
+
+```sql
+-- DoctorSpeciality
+
+CREATE TABLE DoctorSpeciality IF NOT EXISTS(
+    cpf_doctor VARCHAR NOT NULL,
+
+    id_speciality SERIAL NOT NULL,
+
+    PRIMARY KEY (cpf_doctor, id_speciality),
+
+    FOREIGN KEY (cpf_doctor)
+        REFERENCES Doctor(cpf_employee),
+
+    FOREIGN KEY (id_speciality)
+        REFERENCES Speciality(id)
+
+);
+
+```
+
+---
+
+---
+
+### ReceptionistSector
+
+| Column            | Type    | Constraints | Notes |
+|------------------|---------|------------|------|
+| cpf_receptionist | VARCHAR | PRIMARY KEY, FOREIGN KEY → receptionist(cpf_receptionist) | - |
+| id_sector        | INT     | PRIMARY KEY, FOREIGN KEY → sector(id_sector) | - |
+
+```sql
+-- ReceptionistSector
+
+CREATE TABLE ReceptionistSector (
+    cpf_receptionist VARCHAR NOT NULL,
+    id_sector INT NOT NULL,
+
+    PRIMARY KEY (cpf_receptionist, id_sector),
+
+    FOREIGN KEY (cpf_receptionist)
+        REFERENCES Receptionist(cpf_receptionist),
+
+    FOREIGN KEY (id_sector)
+        REFERENCES Sector(id_sector)
+);
+
+```
+---
+
+---
+### EmployeePhone
+
+| Column         | Type    | Constraints | Notes |
+|----------------|---------|------------|------|
+| cpf_employee   | VARCHAR | PRIMARY KEY, FOREIGN KEY → employee(cpf_employee) | Employee identifier |
+| phone          | VARCHAR | PRIMARY KEY | Phone number |
+
+```sql
+-- EmployeePhone
+
+CREATE TABLE EmployeePhone (
+    cpf_employee VARCHAR NOT NULL,
+    phone VARCHAR NOT NULL,
+
+    PRIMARY KEY (cpf_employee),
+
+    FOREIGN KEY (cpf_employee)
+        REFERENCES Employee(cpf_employee)
+        ON DELETE CASCADE
+);
+```
+---
+
+---
+### PatientPhone
+
+| Column       | Type    | Constraints | Notes |
+|--------------|---------|------------|------|
+| cpf_patient  | VARCHAR | PRIMARY KEY, FOREIGN KEY → patient(cpf_patient) | Patient identifier |
+| phone        | VARCHAR | NOT NULL| Phone number |
+
+```sql
+-- EmployeePhone
+
+CREATE TABLE PatientPhone (
+    cpf_patient VARCHAR NOT NULL,
+    phone VARCHAR NOT NULL,
+
+    PRIMARY KEY (cpf_patient),
+
+    FOREIGN KEY (cpf_patient)
+        REFERENCES Patient(cpf_patient)
+        ON DELETE CASCADE
+);
+```
+
+---
+
+---
+### Make
+
+| Column              | Type    | Constraints | Notes |
+|---------------------|---------|------------|------|
+| cpf_doctor         | VARCHAR | PRIMARY KEY, FOREIGN KEY → doctor(cpf_employee) | Doctor identifier |
+| cpf_receptionist   | VARCHAR | PRIMARY KEY, FOREIGN KEY → receptionist(cpf_employee) | Receptionist identifier |
+| cpf_patient        | VARCHAR | PRIMARY KEY, FOREIGN KEY → patient(cpf_patient) | Patient identifier |
+| id_appointment     | INT     | PRIMARY KEY, FOREIGN KEY → appointment(id) | Appointment identifier |
+| issue_date         | DATE    | - | Issue date |
+| payment_method     | VARCHAR | - | Payment method used |
+| payment_status     | VARCHAR | - | Payment status |
+| amount             | DECIMAL | - | Total amount |
+| prescription_details | TEXT  | - | Prescription details |
+
+```sql
+-- EmployeePhone
+
+CREATE TABLE Make (
+    cpf_doctor VARCHAR NOT NULL,
+    cpf_receptionist VARCHAR NOT NULL,
+    cpf_patient VARCHAR NOT NULL,
+    id_appointment INT NOT NULL,
+
+    issue_date DATE,
+    payment_method VARCHAR,
+    payment_status VARCHAR,
+    amount DECIMAL,
+    prescription_details TEXT,
+
+    PRIMARY KEY (
+        cpf_doctor,
+        cpf_receptionist,
+        cpf_patient,
+        id_appointment
+    ),
+
+    FOREIGN KEY (cpf_doctor)
+        REFERENCES Doctor(cpf_employee),
+
+    FOREIGN KEY (cpf_receptionist)
+        REFERENCES Receptionist(cpf_employee),
+
+    FOREIGN KEY (cpf_patient)
+        REFERENCES Patient(cpf_patient),
+
+    FOREIGN KEY (id_appointment)
+        REFERENCES Appointment(id)
+);
+```
+
 
 ---
 

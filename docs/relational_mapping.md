@@ -4,11 +4,11 @@
 
 Employee(**cpf**, full_name, email, bith_date, street, number, neighborhood, zip_code, city,login,password )
 
-Doctor (**cpf_employee**, crm, shedulte_status, speciality_id )
+Doctor (**cpf_employee**, crm, shedulte_status )
 
 Receptionist (**cpf_employee**, shift, status )
 
-Patient (**cpf**, full_name, email, bith_date, street, number, neighborhood, zip_code, city, insurance_id )
+Patient (**cpf**, full_name, bith_date, street, number, neighborhood, zip_code, city, insurance_id )
 
 Sector(**id**, sector_description)
 
