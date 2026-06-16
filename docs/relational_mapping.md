@@ -2,18 +2,29 @@
 
 **In other words, it defines how entities, attributes, and relationships from the ERD will be represented as tables, columns, primary keys, and foreign keys.**
 
-employee(**cpf**, full_name, email, bith_date, street, number, neighborhood, zip_code, city,login,password )
+Employee(**cpf**, full_name, email, bith_date, street, number, neighborhood, zip_code, city,login,password )
 
-doctor (employee_id, crm, shedulte_status, speciality_id )
+Doctor (**cpf_employee**, crm, shedulte_status, speciality_id )
 
-receptionist (employee_id, shift, sector_id ,status )
+Receptionist (**cpf_employee**, shift, status )
 
-patient (**cpf**, full_name, email, bith_date, street, number, neighborhood, zip_code, city, insurance_id )
+Patient (**cpf**, full_name, email, bith_date, street, number, neighborhood, zip_code, city, insurance_id )
 
-sector(**id**, sector_description)
+Sector(**id**, sector_description)
 
-insurance(**id**, insurance_name, ans_code)
+Insurance(**id**, insurance_name, ans_code)
 
-appointment(**id_appointment**, date, time, status)
+Appointment(**id_appointment**, date, time, status)
 
-speciality(**id**, *id_doctor*, speciality_name)
+Speciality(**id**, speciality_name)
+
+DoctorSpeciality(**cpf_doctor**, **id_speciality**)
+
+ReceptionistSector(**cpf_receptionist**, **id_sector**)
+
+EmployeePhone(**cpf_employee**, phone)
+
+PatientPhone(**cpf_patient**,phone)
+
+
+Make( **cpf_doctor**,**cpf_receptionist**, **cpf_patient**,**id_appointment**, issue_data, payment_method, payment_status, amount, prescrption_details)
