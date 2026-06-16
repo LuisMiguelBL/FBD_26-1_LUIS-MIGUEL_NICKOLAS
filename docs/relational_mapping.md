@@ -2,11 +2,13 @@
 
 **In other words, it defines how entities, attributes, and relationships from the ERD will be represented as tables, columns, primary keys, and foreign keys.**
 
-doctor (**cpf**, full_name, login, bith_date, password,email, endereco_numero, cep, cidade, bairro, rua, crm, shedulte_status )
+employee(**cpf**, full_name, email, bith_date, street, number, neighborhood, zip_code, city,login,password )
 
-receptionist (**cpf**, full_name, login, bith_date, password,email, endereco_numero, cep, cidade, bairro, rua, turno, status )
+doctor (employee_id, crm, shedulte_status, speciality_id )
 
-patient (**cpf**, full_name, login, bith_date, password,email, endereco_numero, cep, cidade, bairro, rua )
+receptionist (employee_id, shift, sector_id ,status )
+
+patient (**cpf**, full_name, email, bith_date, street, number, neighborhood, zip_code, city, insurance_id )
 
 sector(**id**, sector_description)
 

@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS employee (
     cpf VARCHAR(11) NOT NULL UNIQUE,
     full_name VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL,
-    phone VARCHAR(20) NOT NULL,
+    phone VARCHAR(20) NOT NULL, --retirar
     birth_date DATE NOT NULL,
     street VARCHAR(100) NOT NULL,
     number VARCHAR(10) NOT NULL,
@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS receptionist (
 CREATE TABLE IF NOT EXISTS patient (
     cpf VARCHAR(11) PRIMARY KEY,
     full_name VARCHAR(100) NOT NULL,
-    phone VARCHAR(20) NOT NULL,
+    phone VARCHAR(20) NOT NULL, --retirar
     birth_date DATE NOT NULL,
     street VARCHAR(100) NOT NULL,
     number VARCHAR(10) NOT NULL,
