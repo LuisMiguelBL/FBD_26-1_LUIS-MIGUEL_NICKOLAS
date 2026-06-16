@@ -27,11 +27,10 @@ Stores all employees of the clinic. `Doctor` and `Receptionist` are specializati
 ```sql
 -- employee
 -- Stores all employees of the clinic (doctors, receptionists and other staff).
-CREATE TABLE employee (
+CREATE TABLE IF NOT EXISTS employee (
     cpf VARCHAR(11) PRIMARY KEY,
     full_name VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL,
-    phone VARCHAR(20) NOT NULL,
     birth_date DATE NOT NULL,
     street VARCHAR(100) NOT NULL,
     number VARCHAR(10) NOT NULL,
@@ -40,6 +39,30 @@ CREATE TABLE employee (
     city VARCHAR(100) NOT NULL,
     login VARCHAR(50) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL
+);
+```
+
+---
+
+### EmployeePhone
+
+| Column         | Type    | Constraints | Notes |
+|----------------|---------|------------|------|
+| cpf_employee   | VARCHAR | PRIMARY KEY, FOREIGN KEY → employee(cpf_employee) | Employee identifier |
+| phone          | VARCHAR | PRIMARY KEY | Phone number |
+
+```sql
+-- EmployeePhone
+
+CREATE TABLE IF NOT EXISTS EmployeePhone (
+    cpf_employee VARCHAR NOT NULL,
+    phone VARCHAR NOT NULL,
+
+    PRIMARY KEY (cpf_employee, phone),
+
+    FOREIGN KEY (cpf_employee)
+        REFERENCES employee(cpf)
+        ON DELETE CASCADE
 );
 ```
 
@@ -59,12 +82,42 @@ Specialization of `employee`. Stores doctor-specific attributes.
 ```sql
 -- doctor
 -- Specialization of employee. Stores doctor-specific attributes.
-CREATE TABLE doctor (
+CREATE TABLE IF NOT EXISTS doctor (
     cpf_employee VARCHAR PRIMARY KEY REFERENCES employee(cpf) ON DELETE CASCADE,
     crm VARCHAR(20) NOT NULL UNIQUE,
-    schedule_status VARCHAR(20) NOT NULL,
-    
+    schedule_status VARCHAR(20) NOT NULL
 );
+```
+
+---
+
+### DoctorSpeciality
+
+Stores the doctors’ specializations.
+
+| Column | Type | Constraints | Notes |
+|---|---|---|---|
+| cpf_doctor| VARCHAR | PRIMARY KEY, FOREIGN KEY → doctor(cpf_employee) | - |
+| id_speciality | INT | PRIMARY KEY, FOREIGN KEY → specialit(id)  | - |
+
+```sql
+-- DoctorSpeciality
+
+CREATE TABLE IF NOT EXISTS DoctorSpeciality(
+    cpf_doctor VARCHAR NOT NULL,
+
+    id_speciality INT NOT NULL,
+
+    PRIMARY KEY (cpf_doctor, id_speciality),
+
+    FOREIGN KEY (cpf_doctor)
+        REFERENCES doctor(cpf_employee),
+
+    FOREIGN KEY (id_speciality)
+        REFERENCES speciality(id)
+
+);
+
 ```
 
 ---
@@ -82,11 +135,38 @@ Specialization of `employee`. Stores receptionist-specific attributes.
 ```sql
 -- receptionist
 -- Specialization of employee. Stores receptionist-specific attributes.
-CREATE TABLE receptionist (
+CREATE TABLE IF NOT EXISTS receptionist (
     cpf_employee VARCHAR PRIMARY KEY REFERENCES employee(cpf) ON DELETE CASCADE,
     shift VARCHAR(20) NOT NULL,
     status VARCHAR(20) NOT NULL
 );
+```
+
+---
+
+### ReceptionistSector
+
+| Column            | Type    | Constraints | Notes |
+|------------------|---------|------------|------|
+| cpf_receptionist | VARCHAR | PRIMARY KEY, FOREIGN KEY → receptionist(cpf_receptionist) | - |
+| id_sector        | INT     | PRIMARY KEY, FOREIGN KEY → sector(id_sector) | - |
+
+```sql
+-- ReceptionistSector
+
+CREATE TABLE IF NOT EXISTS ReceptionistSector (
+    cpf_receptionist VARCHAR NOT NULL,
+    id_sector INT NOT NULL,
+
+    PRIMARY KEY (cpf_receptionist, id_sector),
+
+    FOREIGN KEY (cpf_receptionist)
+        REFERENCES receptionist(cpf_employee),
+
+    FOREIGN KEY (id_sector)
+        REFERENCES sector(id)
+);
+
 ```
 
 ---
@@ -110,10 +190,9 @@ Stores patient data. Independent from the employee hierarchy.
 ```sql
 -- patient
 -- Stores patient personal data. Independent from the employee hierarchy.
-CREATE TABLE patient (
+CREATE TABLE IF NOT EXISTS patient (
     cpf VARCHAR(11) PRIMARY KEY,
     full_name VARCHAR(100) NOT NULL,
-    phone VARCHAR(20) NOT NULL,
     birth_date DATE NOT NULL,
     street VARCHAR(100) NOT NULL,
     number VARCHAR(10) NOT NULL,
@@ -126,33 +205,29 @@ CREATE TABLE patient (
 
 ---
 
-### appointment
+### PatientPhone
 
-Stores scheduled appointments between doctors and patients.
-
-| Column | Type | Constraints | Notes |
-|---|---|---|---|
-| id | SERIAL | PRIMARY KEY | Auto-generated |
-| date | DATE | NOT NULL | - |
-| time | TIME | NOT NULL | Combined with date to avoid conflicts |
-| status | VARCHAR(20) | NOT NULL | e.g. Scheduled, Rescheduled, Cancelled |
+| Column       | Type    | Constraints | Notes |
+|--------------|---------|------------|------|
+| cpf_patient  | VARCHAR | PRIMARY KEY, FOREIGN KEY → patient(cpf_patient) | Patient identifier |
+| phone        | VARCHAR | NOT NULL| Phone number |
 
 ```sql
--- appointment
--- Stores scheduled appointments between doctors and patients.
--- The combination of doctor_id, date and time must be unique to prevent scheduling conflicts.
-CREATE TABLE appointment (
-    id SERIAL PRIMARY KEY,
-    date DATE NOT NULL,
-    time TIME NOT NULL,
-    status VARCHAR(20) NOT NULL,
-       
+-- EmployeePhone
+
+CREATE TABLE IF NOT EXISTS PatientPhone (
+    cpf_patient VARCHAR NOT NULL,
+    phone VARCHAR NOT NULL,
+
+    PRIMARY KEY (cpf_patient, phone),
+
+    FOREIGN KEY (cpf_patient)
+        REFERENCES patient(cpf)
+        ON DELETE CASCADE
 );
 ```
 
 ---
-
-
 
 ### speciality
 
@@ -166,12 +241,13 @@ Stores medical specialties.
 ```sql
 -- speciality
 -- Stores the available medical specialties.
-CREATE TABLE speciality (
+CREATE TABLE IF NOT EXISTS speciality (
     id SERIAL PRIMARY KEY,
     specialty_name VARCHAR(100) NOT NULL
 );
 ```
 
+---
 
 ### insurance
 
@@ -186,7 +262,7 @@ Stores health insurance providers.
 ```sql
 -- insurance
 -- Stores health insurance providers available to patients.
-CREATE TABLE insurance (
+CREATE TABLE IF NOT EXISTS insurance (
     id SERIAL PRIMARY KEY,
     insurance_name VARCHAR(100) NOT NULL,
     ans_code VARCHAR(20)
@@ -207,7 +283,7 @@ Stores clinic sectors where receptionists work.
 ```sql
 -- sector
 -- Stores the clinic sectors where receptionists are assigned.
-CREATE TABLE sector (
+CREATE TABLE IF NOT EXISTS sector (
     id SERIAL PRIMARY KEY,
     sector_description VARCHAR(100) NOT NULL
 );
@@ -215,117 +291,32 @@ CREATE TABLE sector (
 
 ---
 
----
+### appointment
 
-### DoctorSpeciality
-
-Stores the doctors’ specializations.
+Stores scheduled appointments between doctors and patients.
 
 | Column | Type | Constraints | Notes |
 |---|---|---|---|
-| cpf_doctor| VARCHAR | PRIMARY KEY, FOREIGN KEY → doctor(cpf_employee) | - |
-| id_speciality | INT | PRIMARY KEY, FOREIGN KEY → specialit(id)  | - |
+| id | SERIAL | PRIMARY KEY | Auto-generated |
+| date | DATE | NOT NULL | - |
+| time | TIME | NOT NULL | Combined with date to avoid conflicts |
+| status | VARCHAR(20) | NOT NULL | e.g. Scheduled, Rescheduled, Cancelled |
 
 ```sql
--- DoctorSpeciality
-
-CREATE TABLE DoctorSpeciality IF NOT EXISTS(
-    cpf_doctor VARCHAR NOT NULL,
-
-    id_speciality SERIAL NOT NULL,
-
-    PRIMARY KEY (cpf_doctor, id_speciality),
-
-    FOREIGN KEY (cpf_doctor)
-        REFERENCES Doctor(cpf_employee),
-
-    FOREIGN KEY (id_speciality)
-        REFERENCES Speciality(id)
-
-);
-
-```
-
----
-
----
-
-### ReceptionistSector
-
-| Column            | Type    | Constraints | Notes |
-|------------------|---------|------------|------|
-| cpf_receptionist | VARCHAR | PRIMARY KEY, FOREIGN KEY → receptionist(cpf_receptionist) | - |
-| id_sector        | INT     | PRIMARY KEY, FOREIGN KEY → sector(id_sector) | - |
-
-```sql
--- ReceptionistSector
-
-CREATE TABLE ReceptionistSector (
-    cpf_receptionist VARCHAR NOT NULL,
-    id_sector INT NOT NULL,
-
-    PRIMARY KEY (cpf_receptionist, id_sector),
-
-    FOREIGN KEY (cpf_receptionist)
-        REFERENCES Receptionist(cpf_receptionist),
-
-    FOREIGN KEY (id_sector)
-        REFERENCES Sector(id_sector)
-);
-
-```
----
-
----
-### EmployeePhone
-
-| Column         | Type    | Constraints | Notes |
-|----------------|---------|------------|------|
-| cpf_employee   | VARCHAR | PRIMARY KEY, FOREIGN KEY → employee(cpf_employee) | Employee identifier |
-| phone          | VARCHAR | PRIMARY KEY | Phone number |
-
-```sql
--- EmployeePhone
-
-CREATE TABLE EmployeePhone (
-    cpf_employee VARCHAR NOT NULL,
-    phone VARCHAR NOT NULL,
-
-    PRIMARY KEY (cpf_employee),
-
-    FOREIGN KEY (cpf_employee)
-        REFERENCES Employee(cpf_employee)
-        ON DELETE CASCADE
-);
-```
----
-
----
-### PatientPhone
-
-| Column       | Type    | Constraints | Notes |
-|--------------|---------|------------|------|
-| cpf_patient  | VARCHAR | PRIMARY KEY, FOREIGN KEY → patient(cpf_patient) | Patient identifier |
-| phone        | VARCHAR | NOT NULL| Phone number |
-
-```sql
--- EmployeePhone
-
-CREATE TABLE PatientPhone (
-    cpf_patient VARCHAR NOT NULL,
-    phone VARCHAR NOT NULL,
-
-    PRIMARY KEY (cpf_patient),
-
-    FOREIGN KEY (cpf_patient)
-        REFERENCES Patient(cpf_patient)
-        ON DELETE CASCADE
+-- appointment
+-- Stores scheduled appointments between doctors and patients.
+-- The combination of doctor_id, date and time must be unique to prevent scheduling conflicts.
+CREATE TABLE IF NOT EXISTS appointment (
+    id SERIAL PRIMARY KEY,
+    date DATE NOT NULL,
+    time TIME NOT NULL,
+    status VARCHAR(20) NOT NULL
+       
 );
 ```
 
 ---
 
----
 ### Make
 
 | Column              | Type    | Constraints | Notes |
@@ -343,7 +334,7 @@ CREATE TABLE PatientPhone (
 ```sql
 -- EmployeePhone
 
-CREATE TABLE Make (
+CREATE TABLE IF NOT EXISTS Make (
     cpf_doctor VARCHAR NOT NULL,
     cpf_receptionist VARCHAR NOT NULL,
     cpf_patient VARCHAR NOT NULL,
@@ -363,19 +354,18 @@ CREATE TABLE Make (
     ),
 
     FOREIGN KEY (cpf_doctor)
-        REFERENCES Doctor(cpf_employee),
+        REFERENCES doctor(cpf_employee),
 
     FOREIGN KEY (cpf_receptionist)
-        REFERENCES Receptionist(cpf_employee),
+        REFERENCES receptionist(cpf_employee),
 
     FOREIGN KEY (cpf_patient)
-        REFERENCES Patient(cpf_patient),
+        REFERENCES patient(cpf),
 
     FOREIGN KEY (id_appointment)
-        REFERENCES Appointment(id)
+        REFERENCES appointment(id)
 );
 ```
-
 
 ---
 
