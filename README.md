@@ -33,7 +33,3 @@ The purpose is to design and implement a relational database for a fictitious me
    - [create_tables.sql](database/create_tables.sql)
    - [add_constraints.sql](database/add_constraints.sql)
    - [insert_sample_data.sql](database/insert_sample_data.sql)
-
-## How to Run the Database
-
-To be provided later.
