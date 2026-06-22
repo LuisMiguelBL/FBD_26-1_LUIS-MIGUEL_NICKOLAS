@@ -1,4 +1,3 @@
--- add_constraints.sql
 -- This script implements data validation rules to ensure database integrity.
 
 -- 1. Personal Identification Constraints

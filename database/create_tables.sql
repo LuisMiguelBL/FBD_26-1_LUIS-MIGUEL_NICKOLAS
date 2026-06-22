@@ -1,3 +1,6 @@
+-- This script will create the necessary tables 
+-- for the MediFlow clinic management system.
+
 -- speciality
 CREATE TABLE IF NOT EXISTS speciality (
     id SERIAL PRIMARY KEY,
