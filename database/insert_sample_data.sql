@@ -1,4 +1,3 @@
--- insert_sample_data.sql
 -- This script populates the MediFlow database with sample data for testing purposes.
 -- It follows the referential integrity order, inserting base tables first.
 -- All addresses are based on real locations in Serra Talhada, PE.
