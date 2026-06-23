@@ -28,3 +28,5 @@ PatientPhone(**cpf_patient**,phone)
 
 
 Make( **cpf_doctor**,**cpf_receptionist**, **cpf_patient**,**id_appointment**, issue_data, payment_method, payment_status, amount, prescrption_details)
+
+Next: [Relational Data Dictionary with SQL](relational_data_dictionary_with_sql.md)
