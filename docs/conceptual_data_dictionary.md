@@ -41,7 +41,6 @@ This document describes all entities, attributes, semantic types, constraints an
 | NEIGHBORHOOD | Neighborhood name | Simple | Yes | Part of composite address |
 | ZIP_CODE | Postal code | Simple | Yes | Part of composite address |
 | CITY | City name | Simple | Yes | Part of composite address |
-| INSURANCE_ID | Patient's health insurance plan | Simple | No | Foreign key referencing Insurance |
 
 ---
 
@@ -52,7 +51,6 @@ This document describes all entities, attributes, semantic types, constraints an
 | EMPLOYEE_ID | Reference to Employee identifier | Simple | Yes | Primary Key, Foreign key referencing Employee |
 | CRM | Regional Medical Council registration number | Simple | Yes | Doctor identifier, candidate key |
 | SCHEDULE_STATUS | Indicates whether the doctor is available for appointments | Simple | Yes | e.g. Active, On Leave, On Vacation |
-| SPECIALTY_ID | Doctor's medical specialty | Simple | Yes | Foreign key referencing Specialty |
 
 ---
 
@@ -62,7 +60,6 @@ This document describes all entities, attributes, semantic types, constraints an
 |---|---|---|---|---|
 | EMPLOYEE_ID | Reference to Employee identifier | Simple | Yes | Primary Key, Foreign key referencing Employee |
 | SHIFT | Work shift of the receptionist | Simple | Yes | e.g. Morning, Afternoon, Night |
-| SECTOR_ID | Sector where the receptionist works | Simple | Yes | Foreign key referencing Sector |
 | STATUS | Current employment status | Simple | Yes | e.g. Active, On Vacation |
 
 ---
@@ -76,9 +73,7 @@ This document describes all entities, attributes, semantic types, constraints an
 | ID | Unique appointment identifier | Simple | Yes | Auto-generated, candidate key |
 | DATE | Scheduled date for the appointment | Simple | Yes | Combined with TIME and DOCTOR_ID for uniqueness |
 | TIME | Scheduled time for the appointment | Simple | Yes | Combined with DATE and DOCTOR_ID for uniqueness |
-| STATUS | Current status of the appointment | Simple | Yes | e.g. Scheduled, Rescheduled, Cancelled |
-| DOCTOR_ID | Doctor assigned to the appointment | Simple | Yes | Foreign key referencing Doctor |
-| PATIENT_CPF | Patient assigned to the appointment | Simple | Yes | Foreign key referencing Patient |
+| STATUS | Current status of the appointment | Simple | Yes | e.g. Scheduled, Rescheduled, Cancelled ||
 
 ---
 
