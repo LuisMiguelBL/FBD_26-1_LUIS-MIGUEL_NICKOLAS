@@ -12,13 +12,18 @@ The following requirements were derived from the domain description of the MediF
 6. The system must record payments made, identifying whether the appointment was private or covered by health insurance.
 7. Staff data must be stored along with their respective roles, enabling access control to the system.
 8. The system must allow the extraction of billing reports by period and total number of appointments completed.
-9. The system must ensure that each physician has a unique schedule, preventing two appointments from being booked at the same time slot.
+9. Each registered person (patient or employee) must have a unique CPF registered in the database.
+10. Each physician must have a unique CRM number registered in the database.
+11. Each user (patient or employee) must have a unique email address.
+12. Each health insurance provider must have a unique registration code.
+13. The system must prevent scheduling conflicts by ensuring that a physician cannot have more than one appointment scheduled for the same date and time.
 
 ## Non-Functional Requirements
 
-10. A patient's appointment history must be retrievable in a centralized manner using their unique identifier.
+14. A patient's appointment history must be retrievable in a centralized manner using their unique identifier.
 
 ---
 
 Back to: [Domain description](domain_description.md)
+
 Next: [Conceptual data dictionary](conceptual_data_dictionary.md)
