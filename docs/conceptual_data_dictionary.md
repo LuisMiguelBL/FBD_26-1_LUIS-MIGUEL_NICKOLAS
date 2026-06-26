@@ -77,34 +77,31 @@ This document describes all entities, attributes, semantic types, constraints an
 
 ---
 
-### Medical Prescription *(relationship attributes between Doctor and Patient)*
-
-> Medical Prescription is not a standalone entity. The attributes below belong to the relationship between `Doctor` and `Patient`.
+### MedicalRecord
 
 | Attribute | Description | Semantic Type | Required | Notes |
 |---|---|---|---|---|
-| ID | Unique prescription identifier | Simple | Yes | Auto-generated, candidate key |
+| ID | Unique medical record identifier | Simple | Yes | Auto-generated |
+| SYMPTOMS | Symptoms reported by the patient | Simple | Yes | - |
+| DIAGNOSIS | Physician's diagnosis | Simple | Yes | - |
+| REQUESTED_EXAMS | Exams requested during the consultation | Multivalued | No | Optional |
+
+### Prescription
+
+| Attribute | Description | Semantic Type | Required | Notes |
+|---|---|---|---|---|
+| ID | Unique prescription identifier | Simple | Yes | Auto-generated |
 | PRESCRIPTION_DETAILS | Prescribed medications and dosages | Simple | Yes | - |
 | ISSUE_DATE | Date the prescription was issued | Simple | Yes | - |
-| DOCTOR_ID | Doctor who issued the prescription | Simple | Yes | Foreign key referencing Doctor |
-| PATIENT_CPF | Patient who received the prescription | Simple | Yes | Foreign key referencing Patient |
 
----
-
-## Payment *(relationship attributes between Appointment and Patient)*
-
-> Payment is not a standalone entity. The attributes below belong to the relationship between `Appointment` and `Patient`.
+### Payment
 
 | Attribute | Description | Semantic Type | Required | Notes |
 |---|---|---|---|---|
-| ID | Unique payment identifier | Simple | Yes | Auto-generated, candidate key |
-| AMOUNT | Total amount charged for the appointment | Simple | Yes | - |
-| PAYMENT_METHOD | Method of payment used | Simple | Yes | e.g. Cash, Card, Insurance |
-| PAYMENT_STATUS | Indicates whether payment has been received | Simple | Yes | Paid or Pending |
-| APPOINTMENT_ID | Appointment associated with the payment | Simple | Yes | Foreign key referencing Appointment |
-| PATIENT_CPF | Patient who made the payment | Simple | Yes | Foreign key referencing Patient |
-
----
+| ID | Unique payment identifier | Simple | Yes | Auto-generated |
+| AMOUNT | Total amount charged | Simple | Yes | - |
+| PAYMENT_METHOD | Payment method | Simple | Yes | Cash, Card, Insurance |
+| PAYMENT_STATUS | Payment status | Simple | Yes | Paid or Pending |
 
 ## Support Entities
 
