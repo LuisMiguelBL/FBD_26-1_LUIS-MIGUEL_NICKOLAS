@@ -75,20 +75,26 @@ Stores scheduled appointments between doctors and patients.
 | Column | Type | Constraints | Notes |
 |---|---|---|---|
 | id | SERIAL | PRIMARY KEY | Auto-generated |
-| date | DATE | NOT NULL | - |
-| time | TIME | NOT NULL | Combined with date to avoid conflicts |
+| date | DATE | NOT NULL | Scheduled date |
+| time | TIME | NOT NULL | Scheduled time |
 | status | VARCHAR(20) | NOT NULL | e.g. Scheduled, Rescheduled, Cancelled |
+| cpf_patient | VARCHAR(11) | NOT NULL, FOREIGN KEY → patient(cpf) | Patient being attended |
+| cpf_doctor | VARCHAR | NOT NULL, FOREIGN KEY → doctor(cpf_employee) | Doctor conducting consultation |
+| cpf_receptionist | VARCHAR | FOREIGN KEY → receptionist(cpf_employee) | Receptionist who booked (optional) |
 
 ```sql
 -- appointment
 -- Stores scheduled appointments between doctors and patients.
--- The combination of doctor_id, date and time must be unique to prevent scheduling conflicts.
+-- The combination of cpf_doctor, date and time must be unique to prevent scheduling conflicts.
 CREATE TABLE IF NOT EXISTS appointment (
     id SERIAL PRIMARY KEY,
     date DATE NOT NULL,
     time TIME NOT NULL,
-    status VARCHAR(20) NOT NULL
-       
+    status VARCHAR(20) NOT NULL,
+    cpf_patient VARCHAR(11) NOT NULL REFERENCES patient(cpf) ON DELETE RESTRICT,
+    cpf_doctor VARCHAR NOT NULL REFERENCES doctor(cpf_employee) ON DELETE RESTRICT,
+    cpf_receptionist VARCHAR REFERENCES receptionist(cpf_employee) ON DELETE RESTRICT,
+    UNIQUE(cpf_doctor, date, time)
 );
 ```
 
@@ -301,7 +307,7 @@ CREATE TABLE IF NOT EXISTS patient (
 | phone        | VARCHAR | NOT NULL| Phone number |
 
 ```sql
--- EmployeePhone
+-- PatientPhone
 
 CREATE TABLE IF NOT EXISTS PatientPhone (
     cpf_patient VARCHAR NOT NULL,
@@ -317,53 +323,77 @@ CREATE TABLE IF NOT EXISTS PatientPhone (
 
 ---
 
-### Make
+### payment
 
-| Column              | Type    | Constraints | Notes |
-|---------------------|---------|------------|------|
-| cpf_doctor         | VARCHAR | PRIMARY KEY, FOREIGN KEY → doctor(cpf_employee) | Doctor identifier |
-| cpf_receptionist   | VARCHAR | PRIMARY KEY, FOREIGN KEY → receptionist(cpf_employee) | Receptionist identifier |
-| cpf_patient        | VARCHAR | PRIMARY KEY, FOREIGN KEY → patient(cpf_patient) | Patient identifier |
-| id_appointment     | INT     | PRIMARY KEY, FOREIGN KEY → appointment(id) | Appointment identifier |
-| issue_date         | DATE    | - | Issue date |
-| payment_method     | VARCHAR | - | Payment method used |
-| payment_status     | VARCHAR | - | Payment status |
-| amount             | DECIMAL | - | Total amount |
-| prescription_details | TEXT  | - | Prescription details |
+Stores payment details for appointments.
+
+| Column | Type | Constraints | Notes |
+|---|---|---|---|
+| id | SERIAL | PRIMARY KEY | Auto-generated |
+| appointment_id | INT | NOT NULL, FOREIGN KEY → appointment(id) | Associated appointment |
+| amount | DECIMAL(10,2) | NOT NULL | Total amount charged |
+| payment_method | VARCHAR(50) | NOT NULL | e.g. Cash, Card, Insurance |
+| payment_status | VARCHAR(20) | NOT NULL | e.g. Paid, Pending, Refunded |
 
 ```sql
--- EmployeePhone
+-- payment
+-- Stores payment details associated with appointments.
+CREATE TABLE IF NOT EXISTS payment (
+    id SERIAL PRIMARY KEY,
+    appointment_id INTEGER NOT NULL REFERENCES appointment(id) ON DELETE RESTRICT,
+    amount DECIMAL(10, 2) NOT NULL,
+    payment_method VARCHAR(50) NOT NULL,
+    payment_status VARCHAR(20) NOT NULL
+);
+```
 
-CREATE TABLE IF NOT EXISTS Make (
-    cpf_doctor VARCHAR NOT NULL,
-    cpf_receptionist VARCHAR NOT NULL,
-    cpf_patient VARCHAR NOT NULL,
-    id_appointment INT NOT NULL,
+---
 
-    issue_date DATE,
-    payment_method VARCHAR,
-    payment_status VARCHAR,
-    amount DECIMAL,
-    prescription_details TEXT,
+### medical_record
 
-    PRIMARY KEY (
-        cpf_doctor,
-        cpf_receptionist,
-        cpf_patient,
-        id_appointment
-    ),
+Stores electronic medical records created during consultations.
 
-    FOREIGN KEY (cpf_doctor)
-        REFERENCES doctor(cpf_employee),
+| Column | Type | Constraints | Notes |
+|---|---|---|---|
+| id | SERIAL | PRIMARY KEY | Auto-generated |
+| appointment_id | INT | NOT NULL, UNIQUE, FOREIGN KEY → appointment(id) | Associated appointment |
+| symptoms | TEXT | NOT NULL | Patient reported symptoms |
+| diagnosis | TEXT | NOT NULL | Physician diagnosis |
+| requested_exams | TEXT | - | Exams requested (optional) |
 
-    FOREIGN KEY (cpf_receptionist)
-        REFERENCES receptionist(cpf_employee),
+```sql
+-- medical_record
+-- Stores electronic medical records associated with appointments.
+CREATE TABLE IF NOT EXISTS medical_record (
+    id SERIAL PRIMARY KEY,
+    appointment_id INTEGER NOT NULL UNIQUE REFERENCES appointment(id) ON DELETE RESTRICT,
+    symptoms TEXT NOT NULL,
+    diagnosis TEXT NOT NULL,
+    requested_exams TEXT
+);
+```
 
-    FOREIGN KEY (cpf_patient)
-        REFERENCES patient(cpf),
+---
 
-    FOREIGN KEY (id_appointment)
-        REFERENCES appointment(id)
+### prescription
+
+Stores medical prescriptions issued during consultations.
+
+| Column | Type | Constraints | Notes |
+|---|---|---|---|
+| id | SERIAL | PRIMARY KEY | Auto-generated |
+| appointment_id | INT | NOT NULL, FOREIGN KEY → appointment(id) | Associated appointment |
+| prescription_details | TEXT | NOT NULL | Prescribed medications and dosages |
+| issue_date | DATE | NOT NULL | Date issued |
+
+```sql
+-- prescription
+-- Stores medical prescriptions associated with appointments.
+CREATE TABLE IF NOT EXISTS prescription (
+    id SERIAL PRIMARY KEY,
+    appointment_id INTEGER NOT NULL REFERENCES appointment(id) ON DELETE RESTRICT,
+    prescription_details TEXT NOT NULL,
+    issue_date DATE NOT NULL
 );
 ```
 
