@@ -20,11 +20,11 @@ ALTER TABLE patient ADD CONSTRAINT check_patient_birth_date CHECK (birth_date <=
 
 -- 4. Financial Constraints
 -- Prevents negative billing amounts.
-ALTER TABLE Make ADD CONSTRAINT check_make_amount_positive CHECK (amount >= 0);
+ALTER TABLE payment ADD CONSTRAINT check_payment_amount_positive CHECK (amount >= 0);
 
 -- 5. Status Constraints
 -- Restricts status values to predefined business categories.
-ALTER TABLE Make ADD CONSTRAINT check_payment_status_values 
+ALTER TABLE payment ADD CONSTRAINT check_payment_status_values 
 CHECK (payment_status IN ('Paid', 'Pending', 'Cancelled', 'Refunded'));
 
 ALTER TABLE appointment ADD CONSTRAINT check_appointment_status_values 

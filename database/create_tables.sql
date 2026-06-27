@@ -20,14 +20,6 @@ CREATE TABLE IF NOT EXISTS sector (
     sector_description VARCHAR(100) NOT NULL
 );
 
--- appointment
-CREATE TABLE IF NOT EXISTS appointment (
-    id SERIAL PRIMARY KEY,
-    date DATE NOT NULL,
-    time TIME NOT NULL,
-    status VARCHAR(20) NOT NULL  
-);
-
 -- employee
 CREATE TABLE IF NOT EXISTS employee (
     cpf VARCHAR(11) PRIMARY KEY,
@@ -55,14 +47,14 @@ CREATE TABLE IF NOT EXISTS EmployeePhone (
 
 -- doctor
 CREATE TABLE IF NOT EXISTS doctor (
-    cpf_employee VARCHAR PRIMARY KEY REFERENCES employee(cpf) ON DELETE CASCADE,
+    cpf_employee VARCHAR PRIMARY KEY REFERENCES employee(cpf) ON DELETE RESTRICT,
     crm VARCHAR(20) NOT NULL UNIQUE,
     schedule_status VARCHAR(20) NOT NULL
 );
 
 -- receptionist
 CREATE TABLE IF NOT EXISTS receptionist (
-    cpf_employee VARCHAR PRIMARY KEY REFERENCES employee(cpf) ON DELETE CASCADE,
+    cpf_employee VARCHAR PRIMARY KEY REFERENCES employee(cpf) ON DELETE RESTRICT,
     shift VARCHAR(20) NOT NULL,
     status VARCHAR(20) NOT NULL
 );
@@ -77,19 +69,18 @@ CREATE TABLE IF NOT EXISTS patient (
     neighborhood VARCHAR(100) NOT NULL,
     zip_code VARCHAR(10) NOT NULL,
     city VARCHAR(100) NOT NULL,
-    insurance_id INTEGER REFERENCES insurance(id) ON DELETE CASCADE
+    insurance_id INTEGER REFERENCES insurance(id) ON DELETE RESTRICT
 );
 
 -- DoctorSpeciality
 CREATE TABLE IF NOT EXISTS DoctorSpeciality(
     cpf_doctor VARCHAR NOT NULL,
-
     id_speciality INT NOT NULL,
 
     PRIMARY KEY (cpf_doctor, id_speciality),
 
-    FOREIGN KEY (cpf_doctor) REFERENCES doctor(cpf_employee),
-    FOREIGN KEY (id_speciality) REFERENCES speciality(id)
+    FOREIGN KEY (cpf_doctor) REFERENCES doctor(cpf_employee) ON DELETE CASCADE,
+    FOREIGN KEY (id_speciality) REFERENCES speciality(id) ON DELETE RESTRICT
 );
 
 -- ReceptionistSector
@@ -99,8 +90,8 @@ CREATE TABLE IF NOT EXISTS ReceptionistSector (
 
     PRIMARY KEY (cpf_receptionist, id_sector),
 
-    FOREIGN KEY (cpf_receptionist) REFERENCES receptionist(cpf_employee),
-    FOREIGN KEY (id_sector) REFERENCES sector(id)
+    FOREIGN KEY (cpf_receptionist) REFERENCES receptionist(cpf_employee) ON DELETE CASCADE,
+    FOREIGN KEY (id_sector) REFERENCES sector(id) ON DELETE RESTRICT
 );
 
 -- PatientPhone 
@@ -113,28 +104,41 @@ CREATE TABLE IF NOT EXISTS PatientPhone (
     FOREIGN KEY (cpf_patient) REFERENCES patient(cpf) ON DELETE CASCADE
 );
 
--- Make 
-CREATE TABLE IF NOT EXISTS Make (
-    cpf_doctor VARCHAR NOT NULL,
-    cpf_receptionist VARCHAR NOT NULL,
-    cpf_patient VARCHAR NOT NULL,
-    id_appointment INT NOT NULL,
+-- appointment
+CREATE TABLE IF NOT EXISTS appointment (
+    id SERIAL PRIMARY KEY,
+    date DATE NOT NULL,
+    time TIME NOT NULL,
+    status VARCHAR(20) NOT NULL,
+    cpf_patient VARCHAR(11) NOT NULL REFERENCES patient(cpf) ON DELETE RESTRICT,
+    cpf_doctor VARCHAR NOT NULL REFERENCES doctor(cpf_employee) ON DELETE RESTRICT,
+    cpf_receptionist VARCHAR REFERENCES receptionist(cpf_employee) ON DELETE RESTRICT,
 
-    issue_date DATE,
-    payment_method VARCHAR,
-    payment_status VARCHAR,
-    amount DECIMAL,
-    prescription_details TEXT,
+    CONSTRAINT unique_doctor_appointment_schedule UNIQUE (cpf_doctor, date, time)
+);
 
-    PRIMARY KEY (
-        cpf_doctor,
-        cpf_receptionist,
-        cpf_patient,
-        id_appointment
-    ),
+-- payment
+CREATE TABLE IF NOT EXISTS payment (
+    id SERIAL PRIMARY KEY,
+    appointment_id INTEGER NOT NULL REFERENCES appointment(id) ON DELETE RESTRICT,
+    amount DECIMAL(10, 2) NOT NULL,
+    payment_method VARCHAR(50) NOT NULL,
+    payment_status VARCHAR(20) NOT NULL
+);
 
-    FOREIGN KEY (cpf_doctor) REFERENCES doctor(cpf_employee),
-    FOREIGN KEY (cpf_receptionist) REFERENCES receptionist(cpf_employee),
-    FOREIGN KEY (cpf_patient) REFERENCES patient(cpf),
-    FOREIGN KEY (id_appointment) REFERENCES appointment(id)
+-- medical_record
+CREATE TABLE IF NOT EXISTS medical_record (
+    id SERIAL PRIMARY KEY,
+    appointment_id INTEGER NOT NULL UNIQUE REFERENCES appointment(id) ON DELETE RESTRICT,
+    symptoms TEXT NOT NULL,
+    diagnosis TEXT NOT NULL,
+    requested_exams TEXT
+);
+
+-- prescription
+CREATE TABLE IF NOT EXISTS prescription (
+    id SERIAL PRIMARY KEY,
+    appointment_id INTEGER NOT NULL REFERENCES appointment(id) ON DELETE RESTRICT,
+    prescription_details TEXT NOT NULL,
+    issue_date DATE NOT NULL
 );
