@@ -30,16 +30,7 @@ INSERT INTO sector (sector_description) VALUES
 ('Financial Dept'), 
 ('Administration');
 
--- 4. appointment
--- Scheduled time slots for patient care.
-INSERT INTO appointment (date, time, status) VALUES 
-('2026-07-01', '08:00:00', 'Scheduled'),
-('2026-07-01', '09:30:00', 'Confirmed'),
-('2026-07-02', '14:00:00', 'Scheduled'),
-('2026-07-02', '15:00:00', 'Cancelled'),
-('2026-07-03', '10:00:00', 'Rescheduled');
-
--- 5. employee
+-- 4. employee
 -- Clinic staff including doctors and administrative personnel.
 -- 10 employees to allow for 5 doctors and 5 receptionists.
 INSERT INTO employee (cpf, full_name, email, birth_date, street, number, neighborhood, zip_code, city, login, password) VALUES 
@@ -54,8 +45,8 @@ INSERT INTO employee (cpf, full_name, email, birth_date, street, number, neighbo
 ('66655544433', 'Beatriz Costa Lima', 'beatriz.c@mediflow.com', '1996-10-05', 'Rua Cornélio Soares', '300', 'Nossa Senhora da Penha', '56903-230', 'Serra Talhada', 'bcosta', 'hashed_pw_9'),
 ('99900011122', 'Juliana Paes Melo', 'juliana.p@mediflow.com', '1994-12-12', 'Rua Ademar Xavier', '150', 'Várzea', '56912-340', 'Serra Talhada', 'jpaes', 'hashed_pw_10');
 
--- 6. EmployeePhone
--- Contact numbers for employees (multi-valued attribute).
+-- 5. EmployeePhone
+-- Contact numbers for employees.
 INSERT INTO EmployeePhone (cpf_employee, phone) VALUES 
 ('11122233344', '87999991111'),
 ('55566677788', '87977773333'),
@@ -68,9 +59,8 @@ INSERT INTO EmployeePhone (cpf_employee, phone) VALUES
 ('66655544433', '87966660004'),
 ('99900011122', '87955550005');
 
--- 7. doctor
+-- 6. doctor
 -- Link employees to medical roles and CRMs.
--- Minimum 5 doctors.
 INSERT INTO doctor (cpf_employee, crm, schedule_status) VALUES 
 ('11122233344', 'CRM/PE 12345', 'Active'),
 ('55566677788', 'CRM/PE 67890', 'Active'),
@@ -78,9 +68,8 @@ INSERT INTO doctor (cpf_employee, crm, schedule_status) VALUES
 ('44433322211', 'CRM/PE 44556', 'Active'),
 ('88877766655', 'CRM/PE 77889', 'Active');
 
--- 8. receptionist
+-- 7. receptionist
 -- Link employees to administrative/receptionist roles.
--- Minimum 5 receptionists.
 INSERT INTO receptionist (cpf_employee, shift, status) VALUES 
 ('77788899900', 'Morning', 'Active'),
 ('22233344455', 'Afternoon', 'Active'),
@@ -88,7 +77,7 @@ INSERT INTO receptionist (cpf_employee, shift, status) VALUES
 ('66655544433', 'Afternoon', 'Active'),
 ('99900011122', 'Night', 'Active');
 
--- 9. patient
+-- 8. patient
 -- Registered patients with their personal information.
 INSERT INTO patient (cpf, full_name, birth_date, street, number, neighborhood, zip_code, city, insurance_id) VALUES 
 ('00011122233', 'Alice Bezerra Silva', '1998-12-05', 'Rua Cornélio Soares', '15', 'Nossa Senhora da Penha', '56903-230', 'Serra Talhada', 1),
@@ -97,9 +86,8 @@ INSERT INTO patient (cpf, full_name, birth_date, street, number, neighborhood, z
 ('12121212121', 'Fernando Costa Júnior', '1975-01-08', 'Rua Tiburtino Nogueira', '101', 'Ipsep', '56912-010', 'Serra Talhada', 3),
 ('34343434343', 'Júlia Magalhães', '1992-04-15', 'Rua Ademar Xavier', '500', 'Várzea', '56912-340', 'Serra Talhada', 4);
 
--- 10. DoctorSpeciality
+-- 9. DoctorSpeciality
 -- Linking doctors to their specific medical fields.
--- Minimum 5 records.
 INSERT INTO DoctorSpeciality (cpf_doctor, id_speciality) VALUES 
 ('11122233344', 1), -- Ricardo in Cardiology
 ('55566677788', 2), -- Ana in Pediatrics
@@ -107,9 +95,8 @@ INSERT INTO DoctorSpeciality (cpf_doctor, id_speciality) VALUES
 ('44433322211', 4), -- Sérgio in Dermatology
 ('88877766655', 5); -- Fernanda in General Practice
 
--- 11. ReceptionistSector
+-- 10. ReceptionistSector
 -- Assigning receptionists to clinic sectors.
--- Minimum 5 records.
 INSERT INTO ReceptionistSector (cpf_receptionist, id_sector) VALUES 
 ('77788899900', 1), -- Patrícia in Main Reception
 ('22233344455', 4), -- Luís in Financial Dept
@@ -117,7 +104,7 @@ INSERT INTO ReceptionistSector (cpf_receptionist, id_sector) VALUES
 ('66655544433', 3), -- Beatriz in Specialized Clinics
 ('99900011122', 5); -- Juliana in Administration
 
--- 12. PatientPhone
+-- 11. PatientPhone
 -- Contact numbers for patients.
 INSERT INTO PatientPhone (cpf_patient, phone) VALUES 
 ('00011122233', '87912345678'),
@@ -126,11 +113,38 @@ INSERT INTO PatientPhone (cpf_patient, phone) VALUES
 ('12121212121', '87991912222'),
 ('34343434343', '87998983333');
 
--- 13. Make
--- Comprehensive log of medical appointments, including billing and prescriptions.
-INSERT INTO Make (cpf_doctor, cpf_receptionist, cpf_patient, id_appointment, issue_date, payment_method, payment_status, amount, prescription_details) VALUES 
-('11122233344', '77788899900', '00011122233', 1, '2026-07-01', 'Credit Card', 'Paid', 250.00, 'Aspirin 100mg once a day for 30 days.'),
-('55566677788', '77788899900', '44455566677', 2, '2026-07-01', 'Insurance', 'Paid', 150.00, 'Ibuprofen oral suspension for child.'),
-('33344455566', '22233344455', '88899900011', 3, '2026-07-02', 'Cash', 'Pending', 300.00, 'Knee brace and physical therapy recommended.'),
-('44433322211', '22211100099', '12121212121', 4, '2026-07-02', 'Debit Card', 'Paid', 250.00, 'Topical cream for dermatitis applied twice daily.'),
-('88877766655', '66655544433', '34343434343', 5, '2026-07-03', 'Insurance', 'Paid', 200.00, 'Annual checkup, no immediate medication required.');
+-- 12. appointment
+-- Scheduled appointments connecting doctors, patients, and receptionists.
+INSERT INTO appointment (date, time, status, cpf_patient, cpf_doctor, cpf_receptionist) VALUES 
+('2026-07-01', '08:00:00', 'Completed', '00011122233', '11122233344', '77788899900'),
+('2026-07-01', '09:30:00', 'Completed', '44455566677', '55566677788', '77788899900'),
+('2026-07-02', '14:00:00', 'Confirmed', '88899900011', '33344455566', '22233344455'),
+('2026-07-02', '15:00:00', 'Completed', '12121212121', '44433322211', '22211100099'),
+('2026-07-03', '10:00:00', 'Scheduled', '34343434343', '88877766655', '66655544433');
+
+-- 13. payment
+-- Financial transactions associated with completed or scheduled appointments.
+INSERT INTO payment (appointment_id, amount, payment_method, payment_status) VALUES 
+(1, 250.00, 'Credit Card', 'Paid'),
+(2, 150.00, 'Insurance', 'Paid'),
+(3, 300.00, 'Cash', 'Pending'),
+(4, 250.00, 'Debit Card', 'Paid'),
+(5, 200.00, 'Insurance', 'Pending');
+
+-- 14. medical_record
+-- Clinical records associated with appointments.
+INSERT INTO medical_record (appointment_id, symptoms, diagnosis, requested_exams) VALUES 
+(1, 'Chest pain and fatigue', 'Mild Hypertension', 'Electrocardiogram and Blood Test'),
+(2, 'Persistent fever and cough', 'Acute Bronchitis', 'Chest X-Ray'),
+(3, 'Right knee pain after sports', 'Ligament Strain', 'Magnetic Resonance Imaging'),
+(4, 'Skin redness and itching on arms', 'Contact Dermatitis', 'Allergy Panel'),
+(5, 'Routine checkup request', 'Healthy / Routine Assessment', 'Complete Blood Count');
+
+-- 15. prescription
+-- Prescriptions generated during consultations.
+INSERT INTO prescription (appointment_id, prescription_details, issue_date) VALUES 
+(1, 'Aspirin 100mg once daily; Losartan 50mg in the morning for 30 days.', '2026-07-01'),
+(2, 'Amoxicillin 500mg every 8 hours for 7 days; Paracetamol 500mg if fever.', '2026-07-01'),
+(3, 'Ibuprofen 600mg every 12 hours for 5 days; Application of ice packs.', '2026-07-02'),
+(4, 'Hydrocortisone cream 1% apply twice daily; Loratadine 10mg once daily.', '2026-07-02'),
+(5, 'Multivitamin supplement 1 capsule daily with lunch for 60 days.', '2026-07-03');

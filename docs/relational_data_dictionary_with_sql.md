@@ -177,7 +177,7 @@ Specialization of `employee`. Stores doctor-specific attributes.
 -- doctor
 -- Specialization of employee. Stores doctor-specific attributes.
 CREATE TABLE IF NOT EXISTS doctor (
-    cpf_employee VARCHAR PRIMARY KEY REFERENCES employee(cpf) ON DELETE CASCADE,
+    cpf_employee VARCHAR PRIMARY KEY REFERENCES employee(cpf) ON DELETE RESTRICT,
     crm VARCHAR(20) NOT NULL UNIQUE,
     schedule_status VARCHAR(20) NOT NULL
 );
@@ -230,7 +230,7 @@ Specialization of `employee`. Stores receptionist-specific attributes.
 -- receptionist
 -- Specialization of employee. Stores receptionist-specific attributes.
 CREATE TABLE IF NOT EXISTS receptionist (
-    cpf_employee VARCHAR PRIMARY KEY REFERENCES employee(cpf) ON DELETE CASCADE,
+    cpf_employee VARCHAR PRIMARY KEY REFERENCES employee(cpf) ON DELETE RESTRICT,
     shift VARCHAR(20) NOT NULL,
     status VARCHAR(20) NOT NULL
 );
@@ -293,7 +293,7 @@ CREATE TABLE IF NOT EXISTS patient (
     neighborhood VARCHAR(100) NOT NULL,
     zip_code VARCHAR(10) NOT NULL,
     city VARCHAR(100) NOT NULL,
-    insurance_id INTEGER REFERENCES insurance(id) ON DELETE CASCADE
+    insurance_id INTEGER REFERENCES insurance(id) ON DELETE RESTRICT
 );
 ```
 
